@@ -8,7 +8,7 @@
 
 #include "Item.h"
 
-Game::Game() : m_Proj(glm::ortho(0.0f, 16.0f, 0.0f, 9.0f)), m_View(glm::mat4(1))
+Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1))
 {
     //R grama flutuante esquerda
     //T grama flutuante meio
@@ -30,55 +30,26 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 16.0f, 0.0f, 9.0f)), m_View(glm::mat4(1))
     Map *tempmap;
     std::string tmp = "";
     tmp += "................................";
-    tmp += "...............................W";
-    tmp += "..............................WW";
-    tmp += ".........RTTY.................WW";
-    tmp += "..............................WW";
-    tmp += "..................RTY.........WW";
-    tmp += "...........EGD................WW";
-    tmp += "...........LUK...........OOO..WW";
-    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGHH";
-    tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
-    tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
-    tempmap = new Map(tmp, 32, 11, 2, 3, 1.0);
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += ".........RTTY...................";
+    tmp += "................................";
+    tmp += "..................RTY...........";
+    tmp += "...........EGD..................";
+    tmp += "...........LUK...........OOO....";
+    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGD";
+    tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
+    tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
+    tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap));
     m_Map.push_back(tempmap);
     m_Player.m_PlayerPos = {2, 3, 0};
 
-    tmp = "";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-    tmp += "HHHHHWWWWWWWWWWWWWWWWWWWWWWWWHHH";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWHWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWHHWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWPPWWWWHHHWPPPPWWWWWWWWWWWWW";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHF";
-    tmp += "UUUHHHUUUUHHHHHHUUUUUUHHHHHHUUUU";
-    tmp += "SSSSSSSSSSSSSSHHSSSSSSSSSSSSSSSS";
-    tempmap = new Map(tmp, 32, 11, 2, 3, 0.02);
-    tempmap->addEntity(new Entity(glm::vec3(6.05f, 4.7f, 0.0f), true, "res/textures/torch.png", 17, 1.0f / 60.0f, 15, 15.0f / 50.0f));
-    tempmap->addInvInterval(glm::vec2(15.0f, 20.0f));
-    m_Map.push_back(tempmap);
-
-    tmp = "";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-    tmp += "HHHHHWWWWWWWWWWWWWWWWWWWWWWWWHHH";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWWHWWWWWWWWWWWWWWWWWW";
-    tmp += "WWWWWWWWWWWWHHWWWWWWWWWWWWWWWWW.";
-    tmp += "WWWWWPPWWWWHHHWPPPPWWWWWWWWWWWW.";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-    tmp += "UUUHHHUUUUHHHHHHUUUUUUHHHHHHUUUU";
-    tmp += "SSSSSSSSSSSSSSHHSSSSSSSSSSSSSSSS";
-    tempmap = new Map(tmp, 32, 11, 2, 3, 0.02);
-    tempmap->addEntity(new Entity(glm::vec3(32.0f, 4.2f, 0.0f), true));
-    m_Map.push_back(tempmap);
-
-    m_MapCount = 3;
+    m_MapCount = 1;
 
     // Sound
     m_Sound = SoundEngine::GetInstance();
@@ -90,9 +61,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 16.0f, 0.0f, 9.0f)), m_View(glm::mat4(1))
 Game::~Game()
 {
     for (auto m : m_Map)
-    {
         delete m;
-    }
 }
 
 void Game::draw(Renderer r)
@@ -198,7 +167,7 @@ void Game::update(float fElapsedTime)
     keyPrev = m_keys['M'];
 
     m_Player.update(fElapsedTime, *m_Map[m_CurrentMap]);
-
+    /*
     if (m_Player.m_PlayerPos.x - xScreen > 7)
         xScreen = m_Player.m_PlayerPos.x - 7;
     if (m_Player.m_PlayerPos.x - xScreen < 1.6)
@@ -217,7 +186,7 @@ void Game::update(float fElapsedTime)
 
     if (yScreen > m_Map[m_CurrentMap]->m_height - 9.01f)
         yScreen = m_Map[m_CurrentMap]->m_height - 9.01f;
-
+*/
     m_View = glm::translate(glm::mat4(1), glm::vec3(-xScreen, -yScreen, 0));
     m_Sound->update();
     m_Map[m_CurrentMap]->update(fElapsedTime);

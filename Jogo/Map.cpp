@@ -70,6 +70,7 @@ Map::Map(std::string map, int w, int h, int iniX, int iniY, float ambientLight) 
         m_Transparent[i] = false;
     m_Transparent['.'] = true;
     m_Transparent['W'] = true;
+    m_Transparent['O'] = true;
 
     delete[] positions;
 }

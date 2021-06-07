@@ -1,5 +1,5 @@
-#ifndef GAME
-#define GAME
+#ifndef GAME_H
+#define GAME_H
 
 #include <vector>
 #include <map>
@@ -15,7 +15,6 @@ class Game
 public:
     Game();
     ~Game();
-    char getMap(int x, int y);
     void draw(Renderer r);
     void update(float);
     void keyboardDown(int key);

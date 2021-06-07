@@ -137,19 +137,19 @@ void Player::update(float fElapsedTime, const Map &map)
             else
                 m_PlayerPos.y = floor(y);
 
-            auto dd = map.getDanger();
-            if (dd.find(map.getMap(x, (int)m_PlayerPos.y - 1)) != dd.end() || dd.find(map.getMap(x + 1, (int)m_PlayerPos.y - 1)) != dd.end())
-            {
-                m_State = 3;
-                m_PlayerSpeed = {0.0f, 0.0f};
-                goto end;
-            }
             if (map.getMap(x, (int)m_PlayerPos.y - 1) == 'F' || map.getMap(x + 1, (int)m_PlayerPos.y - 1) == 'F')
             {
                 m_State = 4;
                 m_PlayerSpeed = {0.0f, 0.0f};
                 goto end;
             }
+        }
+        auto dd = map.getDanger();
+        if ((dd.find(map.getMap(x, (int)(m_PlayerPos.y - 0.1f))) != dd.end() || dd.find(map.getMap(x + 1, (int)(m_PlayerPos.y - 0.1f))) != dd.end()) && mv.y < 0)
+        {
+            m_State = 3;
+            m_PlayerSpeed = {0.0f, 0.0f};
+            goto end;
         }
 
         y = m_PlayerPos.y;
