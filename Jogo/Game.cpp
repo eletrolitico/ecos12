@@ -37,7 +37,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 16.0f, 0.0f, 9.0f)), m_View(glm::mat4(1))
     tmp += "..................RTY.........WW";
     tmp += "...........EGD................WW";
     tmp += "...........LUK...........OOO..WW";
-    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGHF";
+    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGHH";
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
     tempmap = new Map(tmp, 32, 11, 2, 3, 1.0);
