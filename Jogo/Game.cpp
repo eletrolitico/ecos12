@@ -58,16 +58,12 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Sound->loadAudio("res/audio/jump.ogg", "jump", 0.6f, false);
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
-
-    m_Sprite = new Sprite("res/textures/banana.png", 1, 2);
 }
 
 Game::~Game()
 {
     for (auto m : m_Map)
         delete m;
-
-    delete m_Sprite;
 }
 
 void Game::draw(Renderer r)
@@ -78,8 +74,10 @@ void Game::draw(Renderer r)
     glm::mat4 mvp = m_Proj * m_View;
     glm::vec2 pp = m_Player.m_PlayerPos;
 
+    for (auto tiro : m_tiros)
+        tiro->draw(r);
+
     m_Player.draw(r);
-    m_Sprite->DrawPartial(r, {4.0f, 5.0f}, 16, 16, 32, 32);
     m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
 }
 
@@ -138,6 +136,16 @@ void Game::update(float fElapsedTime)
             m_Player.moveLeft();
         else
             m_Player.stop();
+
+        if (m_keys['E'] && m_tiros.size() < 5)
+        {
+            glm::vec2 spd = {10.0f, 0.0f};
+
+            if (m_Player.m_Mirror)
+                spd.x = -10.0f;
+
+            m_tiros.push_back(new Tiro(m_Player.m_PlayerPos, spd));
+        }
     }
 
     static bool music = true;
@@ -183,20 +191,30 @@ void Game::update(float fElapsedTime)
     if (xScreen < 0.01f)
         xScreen = 0.01f;
 
-    if (xScreen > m_Map[m_CurrentMap]->m_width - 16.01f)
-        xScreen = m_Map[m_CurrentMap]->m_width - 16.01f;
+    if (xScreen > m_Map[m_CurrentMap]->m_width - 32.01f)
+        xScreen = m_Map[m_CurrentMap]->m_width - 32.01f;
 
     yScreen = m_Player.m_PlayerPos.y - 6.5;
 
     if (yScreen < 0.01f)
         yScreen = 0.01f;
 
-    if (yScreen > m_Map[m_CurrentMap]->m_height - 9.01f)
-        yScreen = m_Map[m_CurrentMap]->m_height - 9.01f;
+    if (yScreen > m_Map[m_CurrentMap]->m_height - 18.01f)
+        yScreen = m_Map[m_CurrentMap]->m_height - 18.01f;
 */
+
     m_View = glm::translate(glm::mat4(1), glm::vec3(-xScreen, -yScreen, 0));
     m_Sound->update();
     m_Map[m_CurrentMap]->update(fElapsedTime);
+
+    bool remove = false;
+
+    for (int i = m_tiros.size() - 1; i >= 0; --i)
+        if (m_tiros[i]->update(fElapsedTime))
+        {
+            delete m_tiros[i];
+            m_tiros.erase(m_tiros.begin() + i);
+        }
 }
 
 void Game::keyboardDown(int key)

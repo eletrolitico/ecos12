@@ -37,9 +37,10 @@ public:
         m_IsBig = false;
     }
 
+    bool m_Mirror = false;
+
 private:
     std::unique_ptr<Sprite> m_sprite;
-    bool m_Mirror = false;
     bool m_IsBig = false;
     bool m_IsInverted = false;
     float m_Rotation = 0.0f;

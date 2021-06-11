@@ -9,6 +9,7 @@
 #include "SoundEngine.h"
 #include "Map.h"
 #include "Sprite.h"
+#include "Tiro.h"
 
 class Game
 {
@@ -32,7 +33,7 @@ private:
     int m_MapCount;
     Player m_Player;
 
-    Sprite *m_Sprite;
+    std::vector<Tiro *> m_tiros;
 
     SoundEngine *m_Sound;
 
