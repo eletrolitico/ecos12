@@ -137,15 +137,23 @@ void Game::update(float fElapsedTime)
         else
             m_Player.stop();
 
-        if (m_keys['E'] && m_tiros.size() < 5)
+        static float accumTime = 0;
+        accumTime += fElapsedTime;
+        static bool pressedE = false;
+        if (m_keys['E'] && m_tiros.size() < 20 && accumTime > 0.1 && !pressedE)
         {
-            glm::vec2 spd = {10.0f, 0.0f};
+            pressedE = true;
+            glm::vec2 spd = {100.0f, 0.0f};
+            accumTime = 0;
 
             if (m_Player.m_Mirror)
-                spd.x = -10.0f;
+                spd.x = -100.0f;
 
             m_tiros.push_back(new Tiro(m_Player.m_PlayerPos, spd));
         }
+
+        if (!m_keys['E'])
+            pressedE = false;
     }
 
     static bool music = true;
@@ -206,8 +214,6 @@ void Game::update(float fElapsedTime)
     m_View = glm::translate(glm::mat4(1), glm::vec3(-xScreen, -yScreen, 0));
     m_Sound->update();
     m_Map[m_CurrentMap]->update(fElapsedTime);
-
-    bool remove = false;
 
     for (int i = m_tiros.size() - 1; i >= 0; --i)
         if (m_tiros[i]->update(fElapsedTime))
