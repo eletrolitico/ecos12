@@ -7,87 +7,27 @@ float ts = 32;
 
 Player::Player() : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0))
 {
-    //Texture
-    m_Texture = std::make_unique<Texture>("res/textures/player_sprite.png");
-    int tw = m_Texture->GetWidth(), th = m_Texture->GetHeight();
-
-    float positions[] = {
-        0,
-        0,
-        0 / tw,
-        0 / th,
-
-        1,
-        0,
-        ts / tw,
-        0 / th,
-
-        0,
-        1,
-        0 / tw,
-        ts / th,
-
-        1,
-        0,
-        ts / tw,
-        0 / th,
-
-        0,
-        1,
-        0 / tw,
-        ts / th,
-
-        1,
-        1,
-        ts / tw,
-        ts / th,
-    };
-
-    int fSize = 6 * 4;
-
-    // Vertex array.
-    m_VAO = std::make_unique<VertexArray>();
-
-    // Vertex buffer
-    m_VertexBuffer = std::make_unique<VertexBuffer>(positions, fSize);
-
-    // Set attributes.
-    VertexBufferLayout lay;
-    lay.Push<float>(2);
-    lay.Push<float>(2);
-
-    m_VAO->AddBuffer(*m_VertexBuffer, lay);
-
-    // Unbind Vertex Array Object.
-    m_VAO->Unbind();
-
-    m_Shader = std::make_unique<Shader>("res/shaders/Player.shader");
+    m_sprite = std::make_unique<Sprite>("res/textures/player_sprite.png", 1, 1);
 }
 
 Player::~Player()
 {
 }
 
-void Player::draw(Renderer r, glm::mat4 mvp)
+void Player::draw(Renderer r)
 {
-    m_Shader->Bind();
-    m_Texture->Bind();
-    glm::mat4 trans = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
-    glm::mat4 trans2 = glm::translate(glm::vec3(0.5f, 0.5f, 0.0f));
-    mvp = mvp * trans2 * glm::rotate(glm::radians(m_Rotation), glm::vec3(0.0f, 0.0f, 1.0f)) * trans;
-
     if (m_IsBig)
     {
-        mvp = mvp * glm::scale(glm::vec3(1.2f, 2.0f, 0.0f));
+        m_sprite->setHeight(2.0f);
+        m_sprite->setWidth(1.2f);
     }
-    m_Shader->setUniformMat4f("u_MVP", mvp);
-    m_Shader->setUniform1i("u_State", 3 - m_State);
-    m_Shader->setUniform1i("u_Frame", m_Frame);
-    m_Shader->setUniform1f("u_OffsetX", ts / m_Texture->GetWidth());
-    m_Shader->setUniform1f("u_OffsetY", ts / m_Texture->GetHeight());
-    m_Shader->setUniform1i("u_Mirror", m_Mirror);
+    else
+    {
+        m_sprite->setHeight(1.0f);
+        m_sprite->setWidth(1.0f);
+    }
 
-    r.Draw(*m_VAO, *m_Shader);
+    m_sprite->DrawPartial(r, m_PlayerPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
 }
 
 float accumTime = 0.0f;

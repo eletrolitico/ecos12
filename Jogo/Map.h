@@ -28,7 +28,7 @@ public:
     std::set<char> getDanger() const;
     glm::vec3 getInitialPos() const;
     void addInvInterval(glm::vec2 interval);
-    bool isInverted(glm::vec3 pos) const;
+    bool isInverted(glm::vec2 pos) const;
 
     inline std::vector<Entity *> &getEntities()
     {

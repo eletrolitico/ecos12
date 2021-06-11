@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "SoundEngine.h"
 #include "Map.h"
+#include "Sprite.h"
 
 class Game
 {
@@ -30,6 +31,8 @@ private:
     int m_CurrentMap = 0;
     int m_MapCount;
     Player m_Player;
+
+    Sprite *m_Sprite;
 
     SoundEngine *m_Sound;
 

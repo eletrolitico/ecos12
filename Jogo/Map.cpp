@@ -184,7 +184,7 @@ void Map::addInvInterval(glm::vec2 interval)
     m_InvInterval.push_back(interval);
 }
 
-bool Map::isInverted(glm::vec3 pos) const
+bool Map::isInverted(glm::vec2 pos) const
 {
     for (glm::vec2 in : m_InvInterval)
     {

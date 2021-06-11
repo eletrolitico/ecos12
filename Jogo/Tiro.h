@@ -9,6 +9,8 @@ public:
     Tiro(glm::vec2 pos, glm::vec2 speed);
     ~Tiro();
 
+    void Render();
+
 private:
     glm::vec2 m_pos, m_speed;
 };

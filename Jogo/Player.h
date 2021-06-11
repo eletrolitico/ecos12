@@ -4,14 +4,13 @@
 #include <memory>
 
 #include "Renderer.h"
-#include "VertexBuffer.h"
-#include "Texture.h"
+#include "Sprite.h"
 #include "Map.h"
 
 class Player
 {
 public:
-    glm::vec3 m_PlayerPos;
+    glm::vec2 m_PlayerPos;
     glm::vec2 m_PlayerSpeed;
     bool m_Ground = false;
     // 0=idle 1=walking 2=jumping, 3 = dead, 4 = next stage
@@ -19,12 +18,16 @@ public:
 
     Player();
     ~Player();
+
     void update(float fElapsedTime, const Map &map);
+
     void moveLeft();
     void moveRight();
     void stop();
     void jump();
-    void draw(Renderer r, glm::mat4 mvp);
+
+    void draw(Renderer r);
+
     inline void setBig()
     {
         m_IsBig = true;
@@ -35,10 +38,7 @@ public:
     }
 
 private:
-    std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<VertexArray> m_VAO;
-    std::unique_ptr<VertexBuffer> m_VertexBuffer;
-    std::unique_ptr<Texture> m_Texture;
+    std::unique_ptr<Sprite> m_sprite;
     bool m_Mirror = false;
     bool m_IsBig = false;
     bool m_IsInverted = false;

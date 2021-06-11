@@ -7,9 +7,11 @@
 #include <iostream>
 
 #include "Item.h"
+#include "Sprite.h"
 
 Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1))
 {
+    Sprite::m_projection = m_Proj;
     //R grama flutuante esquerda
     //T grama flutuante meio
     //Y grama flutuante direita
@@ -47,7 +49,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap));
     m_Map.push_back(tempmap);
-    m_Player.m_PlayerPos = {2, 3, 0};
+    m_Player.m_PlayerPos = {2, 3};
 
     m_MapCount = 1;
 
@@ -56,24 +58,29 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Sound->loadAudio("res/audio/jump.ogg", "jump", 0.6f, false);
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
+
+    m_Sprite = new Sprite("res/textures/banana.png", 1, 2);
 }
 
 Game::~Game()
 {
     for (auto m : m_Map)
         delete m;
+
+    delete m_Sprite;
 }
 
 void Game::draw(Renderer r)
 {
-    glClearColor(53 / 100.0f, 81 / 100.0f, 92 / 100.0f, 1.0f);
+    glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glm::mat4 mvp = m_Proj * m_View;
-    glm::vec3 pp = m_Player.m_PlayerPos;
+    glm::vec2 pp = m_Player.m_PlayerPos;
 
+    m_Player.draw(r);
+    m_Sprite->DrawPartial(r, {4.0f, 5.0f}, 16, 16, 32, 32);
     m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
-    m_Player.draw(r, mvp * glm::translate(glm::mat4(1), m_Player.m_PlayerPos));
 }
 
 void Game::update(float fElapsedTime)
