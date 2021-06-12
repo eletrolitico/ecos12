@@ -25,6 +25,7 @@ public:
     void moveRight();
     void stop();
     void jump();
+    void update_frame(float fElapsedTime);
 
     void draw(Renderer r);
 

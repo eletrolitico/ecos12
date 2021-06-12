@@ -7,7 +7,7 @@ float ts = 32;
 
 Player::Player() : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0))
 {
-    m_sprite = std::make_unique<Sprite>("res/textures/player_sprite.png", 1, 1);
+    m_sprite = std::make_unique<Sprite>("res/textures/player_sprite.png", 1.0f, 1.0f);
 }
 
 Player::~Player()
@@ -16,17 +16,6 @@ Player::~Player()
 
 void Player::draw(Renderer r)
 {
-    if (m_IsBig)
-    {
-        m_sprite->setHeight(2.0f);
-        m_sprite->setWidth(1.2f);
-    }
-    else
-    {
-        m_sprite->setHeight(1.0f);
-        m_sprite->setWidth(1.0f);
-    }
-
     m_sprite->DrawPartial(r, m_PlayerPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
 }
 
@@ -76,20 +65,14 @@ void Player::update(float fElapsedTime, const Map &map)
                 m_PlayerPos.y = floor(y) + 0.999f;
             else
                 m_PlayerPos.y = floor(y);
-
-            if (map.getMap(x, (int)m_PlayerPos.y - 1) == 'F' || map.getMap(x + 1, (int)m_PlayerPos.y - 1) == 'F')
-            {
-                m_State = 4;
-                m_PlayerSpeed = {0.0f, 0.0f};
-                goto end;
-            }
         }
         auto dd = map.getDanger();
         if ((dd.find(map.getMap(x, (int)(m_PlayerPos.y - 0.1f))) != dd.end() || dd.find(map.getMap(x + 1, (int)(m_PlayerPos.y - 0.1f))) != dd.end()) && mv.y < 0)
         {
             m_State = 3;
             m_PlayerSpeed = {0.0f, 0.0f};
-            goto end;
+            update_frame(fElapsedTime);
+            return;
         }
 
         y = m_PlayerPos.y;
@@ -113,7 +96,11 @@ void Player::update(float fElapsedTime, const Map &map)
         if (!m_Ground)
             m_State = 2;
     }
-end:
+    update_frame(fElapsedTime);
+}
+
+void Player::update_frame(float fElapsedTime)
+{
     accumTime += fElapsedTime;
 
     if (accumTime > 0.1)

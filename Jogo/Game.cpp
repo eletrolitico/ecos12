@@ -47,7 +47,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
-    tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap));
+    //tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap)); //<- BANANA
     m_Map.push_back(tempmap);
     m_Player.m_PlayerPos = {2, 3};
 
@@ -143,13 +143,16 @@ void Game::update(float fElapsedTime)
         if (m_keys['E'] && m_tiros.size() < 20 && accumTime > 0.1 && !pressedE)
         {
             pressedE = true;
-            glm::vec2 spd = {100.0f, 0.0f};
+            glm::vec2 spd = {5.0f, 0.0f};
             accumTime = 0;
-
+            glm::vec2 pos = m_Player.m_PlayerPos;
             if (m_Player.m_Mirror)
-                spd.x = -100.0f;
-
-            m_tiros.push_back(new Tiro(m_Player.m_PlayerPos, spd));
+            {
+                spd.x *= -1.0f;
+                pos.x -= 1.0f;
+            }
+            pos.y += 0.1f;
+            m_tiros.push_back(new Tiro(pos, spd));
         }
 
         if (!m_keys['E'])

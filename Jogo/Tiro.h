@@ -17,6 +17,9 @@ public:
 private:
     glm::vec2 m_pos, m_speed;
     static Sprite *m_sprite;
+    int m_vFrame = 0, m_hFrame = 0;
+    float scale = 3.0f;
+    float m_acum_time = 0.0f;
 };
 
 #endif
