@@ -9,6 +9,7 @@ Player::Player(int texture) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm
 {
     std::string vet[] = {"player_sprite", "player_sprite"};
     m_sprite = std::make_unique<Sprite>("res/textures/" + vet[texture] + ".png", 1.0f, 1.0f);
+    this->texture = texture;
 }
 
 Player::~Player()
@@ -17,7 +18,14 @@ Player::~Player()
 
 void Player::draw(Renderer r)
 {
+    /*if (texture == 0)
+    {
+        m_sprite->DrawPartial(r, m_PlayerPos, (m_State)*32, 504 - ((m_Frame + 1) * 48 - 8), (m_State + 1) * 32, 504 - ((m_Frame)*48 - 8), m_Mirror);
+    }
+    if (texture == 1)
+    {*/
     m_sprite->DrawPartial(r, m_PlayerPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
+    //}
 }
 
 float accumTime = 0.0f;
@@ -110,6 +118,31 @@ void Player::update_frame(float fElapsedTime)
         m_Frame++;
     }
 
+    /*if (texture == 0)
+    {
+        switch (m_State)
+        {
+        case 0:
+            if (m_Frame > 5)
+                m_Frame = 0;
+            break;
+        case 1:
+            if (m_Frame > 7)
+                m_Frame = 0;
+            break;
+        case 2:
+            if (m_Frame > 7)
+                m_Frame = 0;
+            break;
+        case 3:
+            if (m_Frame > 11)
+                m_Frame = 7;
+            break;
+        }
+    }
+
+    if (texture == 1)
+    {*/
     switch (m_State)
     {
     case 0:
@@ -129,6 +162,7 @@ void Player::update_frame(float fElapsedTime)
             m_Frame = 0;
         break;
     }
+    //}
 }
 
 void Player::moveLeft()
