@@ -32,6 +32,7 @@ private:
     int m_CurrentMap = 0;
     int m_MapCount;
     Player m_Player;
+    Player m_Bot;
 
     std::vector<Tiro *> m_tiros;
 

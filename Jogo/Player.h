@@ -16,7 +16,7 @@ public:
     // 0=idle 1=walking 2=jumping, 3 = dead, 4 = next stage
     int m_State = 0;
 
-    Player();
+    Player(int texture);
     ~Player();
 
     void update(float fElapsedTime, const Map &map);

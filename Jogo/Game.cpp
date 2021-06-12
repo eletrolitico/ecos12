@@ -9,7 +9,7 @@
 #include "Item.h"
 #include "Sprite.h"
 
-Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1))
+Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Player(0), m_Bot(1)
 {
     Sprite::m_projection = m_Proj;
     //R grama flutuante esquerda
@@ -50,6 +50,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     //tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap)); //<- BANANA
     m_Map.push_back(tempmap);
     m_Player.m_PlayerPos = {2, 3};
+    m_Bot.m_PlayerPos = {30, 3};
 
     m_MapCount = 1;
 
@@ -78,6 +79,7 @@ void Game::draw(Renderer r)
         tiro->draw(r);
 
     m_Player.draw(r);
+    m_Bot.draw(r);
     m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
 }
 
@@ -140,7 +142,7 @@ void Game::update(float fElapsedTime)
         static float accumTime = 0;
         accumTime += fElapsedTime;
         static bool pressedE = false;
-        if (m_keys['E'] && m_tiros.size() < 20 && accumTime > 0.1 && !pressedE)
+        if (m_keys['E'] && m_tiros.size() < 20 && accumTime > 0.5 && !pressedE)
         {
             pressedE = true;
             glm::vec2 spd = {5.0f, 0.0f};
@@ -193,6 +195,7 @@ void Game::update(float fElapsedTime)
     keyPrev = m_keys['M'];
 
     m_Player.update(fElapsedTime, *m_Map[m_CurrentMap]);
+    m_Bot.update(fElapsedTime, *m_Map[m_CurrentMap]);
     /*
     if (m_Player.m_PlayerPos.x - xScreen > 7)
         xScreen = m_Player.m_PlayerPos.x - 7;
