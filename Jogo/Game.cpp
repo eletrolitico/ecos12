@@ -202,6 +202,18 @@ void Game::update(float fElapsedTime)
     if (yScreen > m_Map[m_CurrentMap]->m_height - 18.01f)
         yScreen = m_Map[m_CurrentMap]->m_height - 18.01f;
 */
+    static float accTime = 0;
+    accTime += fElapsedTime;
+    if (m_Players[1]->m_State != 3 && accTime > 1.5f)
+    {
+        accTime = 0;
+        glm::vec2 spd = {-20.0f, 0.0f};
+        glm::vec2 pos = m_Players[1]->m_PlayerPos;
+        pos.y += 0.25f;
+        pos.x -= 2.0f;
+        m_tiros.push_back(new Tiro(pos, spd, false));
+        m_Sound->playAudio("fire");
+    }
 
     m_View = glm::translate(glm::mat4(1), glm::vec3(-xScreen, -yScreen, 0));
     m_Sound->update();
