@@ -53,6 +53,10 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     pTmp->m_PlayerPos = {30, 3};
     m_Players.push_back(pTmp);
 
+    pTmp = new Player(2);
+    pTmp->m_PlayerPos = {26, 14};
+    m_Players.push_back(pTmp);
+
     m_MapCount = 1;
 
     // Sound
@@ -279,6 +283,9 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
     t->update(fElapsedTime);
     t->m_pos += fElapsedTime * t->m_speed;
     if (t->m_pos.x < 0 || t->m_pos.x > 32 || t->m_pos.y < 0 || t->m_pos.y > 18)
+        return true;
+
+    if (m_Map[m_CurrentMap]->getCollide(t->m_pos.x, t->m_pos.y, t->m_pos.x + t->m_width, t->m_pos.y + t->m_height))
         return true;
 
     if (!t->m_isSelf)

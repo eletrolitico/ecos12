@@ -6,7 +6,7 @@
 
 Player::Player(int texture) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0))
 {
-    std::string vet[] = {"player_red", "player_green"};
+    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue"};
     m_sprite = std::make_unique<Sprite>("res/textures/" + vet[texture] + ".png", 1.0f, 1.0f);
     this->texture = texture;
 }
