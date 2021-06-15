@@ -60,6 +60,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Sound = SoundEngine::GetInstance();
     m_Sound->loadAudio("res/audio/jump.ogg", "jump", 0.6f, false);
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
+    m_Sound->loadAudio("res/audio/fireball.ogg", "fire", 0.8f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
 }
 
@@ -136,6 +137,7 @@ void Game::update(float fElapsedTime)
             }
             pos.y += 0.25f;
             m_tiros.push_back(new Tiro(pos, spd));
+            m_Sound->playAudio("fire");
         }
 
         if (!m_keys['E'])
