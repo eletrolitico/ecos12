@@ -134,7 +134,7 @@ void Game::update(float fElapsedTime)
                 spd.x *= -1.0f;
                 pos.x -= 1.0f;
             }
-            pos.y += 0.1f;
+            pos.y += 0.25f;
             m_tiros.push_back(new Tiro(pos, spd));
         }
 
