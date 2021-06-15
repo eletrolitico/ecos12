@@ -46,7 +46,6 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
-    //tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap)); //<- BANANA
     m_Map.push_back(tempmap);
     m_Self.m_PlayerPos = {2, 3};
 
@@ -60,7 +59,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Sound = SoundEngine::GetInstance();
     m_Sound->loadAudio("res/audio/jump.ogg", "jump", 0.6f, false);
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
-    m_Sound->loadAudio("res/audio/fireball.ogg", "fire", 0.8f, false);
+    m_Sound->loadAudio("res/audio/fireball.ogg", "fire", 0.2f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
 }
 
@@ -80,31 +79,18 @@ void Game::draw(Renderer r)
     glm::mat4 mvp = m_Proj * m_View;
     glm::vec2 pp = m_Self.m_PlayerPos;
 
+    m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
+
     for (auto tiro : m_tiros)
         tiro->draw(r);
 
     m_Self.draw(r);
     for (auto &p : m_Players)
         p->draw(r);
-    m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
 }
 
 void Game::update(float fElapsedTime)
 {
-    if (m_Self.m_State == 4)
-    {
-        m_CurrentMap++;
-        if (m_CurrentMap < m_MapCount)
-        {
-            m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
-            m_Self.m_State = 0;
-        }
-        else
-        {
-            //you win
-            m_Sound->playAudio("jump");
-        }
-    }
     // if not dead
     if (m_Self.m_State != 3)
     {
@@ -114,10 +100,13 @@ void Game::update(float fElapsedTime)
                 m_Sound->playAudio("jump");
             m_Self.jump();
         }
+
         if (m_keys['D'])
             m_Self.moveRight();
+
         else if (m_keys['A'])
             m_Self.moveLeft();
+
         else
             m_Self.stop();
 
@@ -136,7 +125,7 @@ void Game::update(float fElapsedTime)
                 pos.x -= 1.0f;
             }
             pos.y += 0.25f;
-            m_tiros.push_back(new Tiro(pos, spd));
+            m_tiros.push_back(new Tiro(pos, spd, true));
             m_Sound->playAudio("fire");
         }
 
@@ -154,6 +143,11 @@ void Game::update(float fElapsedTime)
         {
             music = true;
             m_Sound->playAudio("music");
+        }
+
+        for (auto p : m_Players)
+        {
+            p->m_State = 0;
         }
     }
 
@@ -177,10 +171,10 @@ void Game::update(float fElapsedTime)
     }
     keyPrev = m_keys['M'];
 
-    m_Self.update(fElapsedTime, *m_Map[m_CurrentMap]);
+    updatePlayer(&m_Self, fElapsedTime);
 
-    for (auto &p : m_Players)
-        p->update(fElapsedTime, *m_Map[m_CurrentMap]);
+    for (auto p : m_Players)
+        updatePlayer(p, fElapsedTime);
     /*
     if (m_Self.m_PlayerPos.x - xScreen > 7)
         xScreen = m_Self.m_PlayerPos.x - 7;
@@ -207,11 +201,112 @@ void Game::update(float fElapsedTime)
     m_Map[m_CurrentMap]->update(fElapsedTime);
 
     for (int i = m_tiros.size() - 1; i >= 0; --i)
-        if (m_tiros[i]->update(fElapsedTime))
+        if (updateTiro(m_tiros[i], fElapsedTime))
         {
             delete m_tiros[i];
             m_tiros.erase(m_tiros.begin() + i);
         }
+}
+
+void Game::updatePlayer(Player *p, float fElapsedTime)
+{
+    float g = 50 * fElapsedTime;
+    float x = p->m_PlayerPos.x;
+    float y = p->m_PlayerPos.y;
+
+    if (p->m_State == 3)
+    {
+        p->update_frame(fElapsedTime);
+        return;
+    }
+
+    p->m_PlayerSpeed.y -= g;
+
+    glm::vec2 mv = (float)fElapsedTime * p->m_PlayerSpeed;
+
+    if (m_Map[m_CurrentMap]->getCollide(x, y + mv.y, x + p->m_width, y + p->m_height + mv.y))
+    {
+        if (mv.y < 0)
+            p->m_Ground = true;
+        else
+            p->m_Ground = false;
+        p->m_PlayerSpeed.y = 0;
+
+        if (mv.y > 0)
+            p->m_PlayerPos.y = floor(y) + 0.999f;
+        else
+            p->m_PlayerPos.y = floor(y);
+    }
+    else
+    {
+        p->m_PlayerPos.y += mv.y;
+        p->m_Ground = false;
+    }
+
+    if (m_Map[m_CurrentMap]->getDanger(x, y + mv.y, x + p->m_width, y + mv.y) && mv.y < 0)
+    {
+        p->m_State = 3;
+        p->m_PlayerSpeed = {0.0f, 0.0f};
+        p->update_frame(fElapsedTime);
+        m_Sound->playAudio("death");
+        return;
+    }
+
+    y = p->m_PlayerPos.y;
+
+    if (m_Map[m_CurrentMap]->getCollide(x + mv.x, y, x + p->m_width + mv.x, y + p->m_height))
+    {
+        // o personagem tem 0.5 de largura
+        p->m_PlayerSpeed.x = 0;
+        if (mv.x > 0)
+            p->m_PlayerPos.x = floor(x) + p->m_width - 0.001f;
+        else
+            p->m_PlayerPos.x = floor(x);
+    }
+    else
+    {
+        p->m_PlayerPos.x += mv.x;
+    }
+
+    if (!p->m_Ground)
+        p->m_State = 2;
+
+    p->update_frame(fElapsedTime);
+}
+
+bool Game::updateTiro(Tiro *t, float fElapsedTime)
+{
+    t->update(fElapsedTime);
+    t->m_pos += fElapsedTime * t->m_speed;
+    if (t->m_pos.x < 0 || t->m_pos.x > 32 || t->m_pos.y < 0 || t->m_pos.y > 18)
+        return true;
+
+    if (!t->m_isSelf)
+        if (((t->m_pos.x > m_Self.m_PlayerPos.x && t->m_pos.x < m_Self.m_PlayerPos.x + m_Self.m_width) ||
+             (t->m_pos.x + t->m_width > m_Self.m_PlayerPos.x && t->m_pos.x + t->m_width < m_Self.m_PlayerPos.x + m_Self.m_width)) &&
+            ((t->m_pos.y > m_Self.m_PlayerPos.y && t->m_pos.y < m_Self.m_PlayerPos.y + m_Self.m_height) ||
+             (t->m_pos.y + t->m_height > m_Self.m_PlayerPos.y && t->m_pos.y + t->m_height < m_Self.m_PlayerPos.y + m_Self.m_height)))
+        {
+            m_Self.m_State = 3;
+            m_Self.m_PlayerSpeed = {0.0f, 0.0f};
+            m_Sound->playAudio("death");
+            return true;
+        }
+
+    for (auto p : m_Players)
+        if (p->m_State != 3)
+            if (((t->m_pos.x > p->m_PlayerPos.x && t->m_pos.x < p->m_PlayerPos.x + p->m_width) ||
+                 (t->m_pos.x + t->m_width > p->m_PlayerPos.x && t->m_pos.x + t->m_width < p->m_PlayerPos.x + p->m_width)) &&
+                ((t->m_pos.y > p->m_PlayerPos.y && t->m_pos.y < p->m_PlayerPos.y + p->m_height) ||
+                 (t->m_pos.y + t->m_height > p->m_PlayerPos.y && t->m_pos.y + t->m_height < p->m_PlayerPos.y + p->m_height)))
+            {
+                p->m_State = 3;
+                p->m_PlayerSpeed = {0.0f, 0.0f};
+                m_Sound->playAudio("death");
+                return true;
+            }
+
+    return false;
 }
 
 void Game::keyboardDown(int key)

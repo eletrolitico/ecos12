@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #include "Renderer.h"
 #include "Player.h"
@@ -21,13 +21,12 @@ public:
     void update(float);
     void keyboardDown(int key);
     void keyboardUp(int key);
-    void reshape(int width, int height);
 
 private:
     glm::mat4 m_Proj, m_View;
     float xScreen = 0, yScreen = 0;
 
-    std::map<int, bool> m_keys;
+    std::unordered_map<int, bool> m_keys;
     std::vector<Map *> m_Map;
     int m_CurrentMap = 0;
     int m_MapCount;
@@ -37,6 +36,9 @@ private:
     std::vector<Tiro *> m_tiros;
 
     SoundEngine *m_Sound;
+
+    void updatePlayer(Player *p, float fElapsedTime);
+    bool updateTiro(Tiro *t, float fElapsedTime);
 
     Tile getTile(char, int);
 };

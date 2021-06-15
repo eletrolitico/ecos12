@@ -3,7 +3,6 @@
 #include "VertexBufferLayout.h"
 
 #include <glm/gtx/transform.hpp>
-float ts = 32;
 
 Player::Player(int texture) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0))
 {
@@ -18,86 +17,9 @@ Player::~Player()
 
 void Player::draw(Renderer r)
 {
-    m_sprite->DrawPartial(r, m_PlayerPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
-}
-
-void Player::update(float fElapsedTime, const Map &map)
-{
-    float g = 50 * fElapsedTime;
-    float x = m_PlayerPos.x;
-    float y = m_PlayerPos.y;
-    if (map.isInverted(m_PlayerPos))
-    {
-        g = -g;
-        m_IsInverted = true;
-        m_Rotation += 500 * fElapsedTime;
-    }
-    else
-    {
-        m_IsInverted = false;
-        m_Rotation -= 500 * fElapsedTime;
-    }
-    if (m_Rotation > 180.0f)
-        m_Rotation = 180.0f;
-    if (m_Rotation < 0.0f)
-        m_Rotation = 0.0f;
-
-    if (m_State != 3)
-    {
-
-        m_PlayerSpeed.y -= g;
-
-        glm::vec2 mv = (float)fElapsedTime * m_PlayerSpeed;
-
-        if (map.getCollide(x, y, glm::vec2(0, mv.y)))
-        {
-            m_PlayerPos.y += mv.y;
-            m_Ground = false;
-        }
-        else
-        {
-            if ((mv.y < 0 && !m_IsInverted) || (mv.y > 0 && m_IsInverted))
-                m_Ground = true;
-            else
-                m_Ground = false;
-            m_PlayerSpeed.y = 0;
-
-            if (mv.y > 0)
-                m_PlayerPos.y = floor(y) + 0.999f;
-            else
-                m_PlayerPos.y = floor(y);
-        }
-        auto dd = map.getDanger();
-        if ((dd.find(map.getMap(x, (int)(m_PlayerPos.y - 0.1f))) != dd.end() || dd.find(map.getMap(x + 1, (int)(m_PlayerPos.y - 0.1f))) != dd.end()) && mv.y < 0)
-        {
-            m_State = 3;
-            m_PlayerSpeed = {0.0f, 0.0f};
-            update_frame(fElapsedTime);
-            return;
-        }
-
-        y = m_PlayerPos.y;
-
-        if (map.getCollide(x, y, glm::vec2(mv.x, 0)))
-        {
-            m_PlayerPos.x += mv.x;
-        }
-        else
-        {
-            // o personagem tem 0.5 de largura
-            m_PlayerSpeed.x = 0;
-            if (mv.x > 0)
-                // um pouquinho menos que 0.25
-                m_PlayerPos.x = floor(x) + 0.249f;
-            else
-                // um pouquinho mais que 0.75
-                m_PlayerPos.x = floor(x) + 0.751f;
-        }
-
-        if (!m_Ground)
-            m_State = 2;
-    }
-    update_frame(fElapsedTime);
+    auto drawPos = m_PlayerPos;
+    drawPos.x -= 0.2;
+    m_sprite->DrawPartial(r, drawPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
 }
 
 void Player::update_frame(float fElapsedTime)

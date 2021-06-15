@@ -8,17 +8,19 @@
 class Tiro
 {
 public:
-    Tiro(glm::vec2 pos, glm::vec2 speed);
+    Tiro(glm::vec2 pos, glm::vec2 speed, bool isSelf);
     ~Tiro();
 
     void draw(Renderer r);
-    bool update(float fElapsedTime);
+    void update(float fElapsedTime);
+
+    glm::vec2 m_pos, m_speed;
+    float m_width = 3 * 0.68f, m_height = 3 * 0.09f;
+    bool m_isSelf;
 
 private:
-    glm::vec2 m_pos, m_speed;
     static Sprite *m_sprite;
     int m_vFrame = 0, m_hFrame = 0;
-    float scale = 3.0f;
     float m_acum_time = 0.0f;
 };
 

@@ -128,9 +128,21 @@ char Map::getMap(int x, int y) const
     return x >= 0 && x < m_width && y >= 0 && y < m_height ? m_Map[(m_height - 1 - y) * m_width + x] : '_';
 }
 
-std::set<char> Map::getDanger() const
+bool Map::getDanger(float x1, float y1, float x2, float y2) const
 {
-    return {'O', 'P'};
+    const char dangers[] = {'O', 'P'};
+    for (char d : dangers)
+    {
+        if (getMap(x1, y1) == d)
+            return true;
+        if (getMap(x1, y2) == d)
+            return true;
+        if (getMap(x2, y1) == d)
+            return true;
+        if (getMap(x2, y2) == d)
+            return true;
+    }
+    return false;
 }
 
 glm::vec3 Map::getInitialPos() const
@@ -138,13 +150,13 @@ glm::vec3 Map::getInitialPos() const
     return m_InitialPos;
 }
 
-bool Map::getCollide(float x, float y, glm::vec2 dir) const
+bool Map::getCollide(float x1, float y1, float x2, float y2) const
 {
-    bool c1 = m_Transparent[(int)getMap(x + 0.25f + dir.x, y + 0 + dir.y)];
-    bool c4 = m_Transparent[(int)getMap(x + 0.25f + dir.x, y + 1 + dir.y)];
-    bool c3 = m_Transparent[(int)getMap(x + 0.75f + dir.x, y + 0 + dir.y)];
-    bool c2 = m_Transparent[(int)getMap(x + 0.75f + dir.x, y + 1 + dir.y)];
-    return x + dir.x > -0.25f && c1 && c2 && c3 && c4;
+    bool c1 = m_Transparent[getMap(x1, y1)];
+    bool c4 = m_Transparent[getMap(x1, y2)];
+    bool c3 = m_Transparent[getMap(x2, y1)];
+    bool c2 = m_Transparent[getMap(x2, y2)];
+    return !(c1 && c2 && c3 && c4);
 }
 
 void Map::addInvInterval(glm::vec2 interval)

@@ -21,9 +21,9 @@ public:
     void draw(Renderer r, glm::mat4 mvp, glm::vec2 li) const;
     void update(float fElapsedTime);
     char getMap(int x, int y) const;
-    bool getCollide(float x, float y, glm::vec2 dir) const;
+    bool getCollide(float x1, float y1, float x2, float y2) const;
+    bool getDanger(float x1, float y1, float x2, float y2) const;
     Tile getTile(char c, int width) const;
-    std::set<char> getDanger() const;
     glm::vec3 getInitialPos() const;
     void addInvInterval(glm::vec2 interval);
     bool isInverted(glm::vec2 pos) const;
