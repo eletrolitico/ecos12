@@ -152,6 +152,8 @@ glm::vec3 Map::getInitialPos() const
 
 bool Map::getCollide(float x1, float y1, float x2, float y2) const
 {
+    x1 = floor(x1);
+    x2 = floor(x2);
     bool c1 = m_Transparent[getMap(x1, y1)];
     bool c4 = m_Transparent[getMap(x1, y2)];
     bool c3 = m_Transparent[getMap(x2, y1)];

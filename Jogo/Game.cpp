@@ -8,6 +8,8 @@
 
 #include "Sprite.h"
 
+#define VELOCIDADE_FOGO 20.0f
+
 Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
     Sprite::m_projection = m_Proj;
@@ -35,13 +37,13 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tmp += "................................";
     tmp += "................................";
     tmp += "................................";
+    tmp += "........RTY..........RTY........";
     tmp += "................................";
+    tmp += "..RTTY....................RTTY..";
+    tmp += "...............RY...............";
+    tmp += ".......RTY............RTY.......";
     tmp += "................................";
-    tmp += ".........RTTY...................";
-    tmp += "................................";
-    tmp += "..................RTY...........";
-    tmp += "...........EGD..................";
-    tmp += "...........LUK...........OOO....";
+    tmp += "..............OOOO..............";
     tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGD";
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
@@ -54,7 +56,8 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Players.push_back(pTmp);
 
     pTmp = new Player(2);
-    pTmp->m_PlayerPos = {26, 14};
+    pTmp->m_PlayerPos = {26.5, 8};
+    pTmp->m_Mirror = true;
     m_Players.push_back(pTmp);
 
     m_MapCount = 1;
@@ -120,7 +123,7 @@ void Game::update(float fElapsedTime)
         if (m_keys['E'] && m_tiros.size() < 20 && accumTime > 0.5 && !pressedE)
         {
             pressedE = true;
-            glm::vec2 spd = {5.0f, 0.0f};
+            glm::vec2 spd = {VELOCIDADE_FOGO, 0.0f};
             accumTime = 0;
             glm::vec2 pos = m_Self.m_PlayerPos;
             if (m_Self.m_Mirror)
@@ -286,7 +289,10 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
         return true;
 
     if (m_Map[m_CurrentMap]->getCollide(t->m_pos.x, t->m_pos.y, t->m_pos.x + t->m_width, t->m_pos.y + t->m_height))
+    {
+        m_Sound->stopAudio("fire");
         return true;
+    }
 
     if (!t->m_isSelf)
         if (((t->m_pos.x > m_Self.m_PlayerPos.x && t->m_pos.x < m_Self.m_PlayerPos.x + m_Self.m_width) ||
