@@ -4,10 +4,6 @@
 
 Map::~Map()
 {
-    for (Entity *e : m_Entities)
-    {
-        delete e;
-    }
 }
 
 Map::Map(std::string map, int w, int h, int iniX, int iniY, float ambientLight) : m_width(w), m_height(h), m_Map(map), m_InitialPos({iniX, iniY, 0.0f}), m_AmbientLight(ambientLight)
@@ -125,21 +121,6 @@ void Map::draw(Renderer r, glm::mat4 mvp, glm::vec2 li) const
     m_Shader->setUniform1f("u_AmbientLight", m_AmbientLight);
     m_Shader->setUniform2f("lightPos[0]", li.x, li.y);
     r.Draw(*m_VAO, *m_Shader);
-
-    int ll = 1;
-    for (Entity *e : m_Entities)
-    {
-        if (e->hasLight())
-        {
-            m_Shader->Bind();
-            m_Shader->setUniform2f("lightPos[" + std::to_string(ll++) + "]", e->getLightPos());
-        }
-        if (ll > 19)
-            break;
-
-        if (e->isDrawable())
-            e->draw(r, mvp);
-    }
 }
 
 char Map::getMap(int x, int y) const
@@ -166,19 +147,6 @@ bool Map::getCollide(float x, float y, glm::vec2 dir) const
     return x + dir.x > -0.25f && c1 && c2 && c3 && c4;
 }
 
-void Map::addEntity(Entity *e)
-{
-    m_Entities.push_back(e);
-}
-
-void Map::update(float fElapsedTime)
-{
-    for (Entity *e : m_Entities)
-    {
-        e->update(fElapsedTime);
-    }
-}
-
 void Map::addInvInterval(glm::vec2 interval)
 {
     m_InvInterval.push_back(interval);
@@ -192,4 +160,8 @@ bool Map::isInverted(glm::vec2 pos) const
             return true;
     }
     return false;
+}
+
+void Map::update(float fElapsedTime)
+{
 }

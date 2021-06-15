@@ -31,8 +31,8 @@ private:
     std::vector<Map *> m_Map;
     int m_CurrentMap = 0;
     int m_MapCount;
-    Player m_Player;
-    Player m_Bot;
+    Player m_Self;
+    std::vector<Player *> m_Players;
 
     std::vector<Tiro *> m_tiros;
 

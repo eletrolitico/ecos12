@@ -47,6 +47,7 @@ private:
     float m_Rotation = 0.0f;
     int texture;
     int m_Frame = 0;
+    float accumTime = 0.0f;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 glm::mat4 Sprite::m_projection;
 
-Sprite::Sprite(const std::string &file, float width, float height) : m_height(height), m_width(width)
+Sprite::Sprite(const std::string &file, float width, float height) : m_width(width), m_height(height)
 {
     m_Texture = std::make_unique<Texture>(file);
 

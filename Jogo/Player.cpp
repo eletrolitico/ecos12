@@ -18,11 +18,9 @@ Player::~Player()
 
 void Player::draw(Renderer r)
 {
-
     m_sprite->DrawPartial(r, m_PlayerPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
 }
 
-float accumTime = 0.0f;
 void Player::update(float fElapsedTime, const Map &map)
 {
     float g = 50 * fElapsedTime;

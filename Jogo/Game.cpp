@@ -6,10 +6,9 @@
 #include <glm/gtx/transform.hpp>
 #include <iostream>
 
-#include "Item.h"
 #include "Sprite.h"
 
-Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Player(0), m_Bot(1)
+Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
     Sprite::m_projection = m_Proj;
     //R grama flutuante esquerda
@@ -49,8 +48,11 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     //tempmap->addEntity(new Item(glm::vec3(13.0f, 9.0f, 0.0f), glm::vec2(5.0f, 0.0f), tempmap)); //<- BANANA
     m_Map.push_back(tempmap);
-    m_Player.m_PlayerPos = {2, 3};
-    m_Bot.m_PlayerPos = {30, 3};
+    m_Self.m_PlayerPos = {2, 3};
+
+    Player *pTmp = new Player(1);
+    pTmp->m_PlayerPos = {30, 3};
+    m_Players.push_back(pTmp);
 
     m_MapCount = 1;
 
@@ -65,6 +67,8 @@ Game::~Game()
 {
     for (auto m : m_Map)
         delete m;
+    for (auto p : m_Players)
+        delete p;
 }
 
 void Game::draw(Renderer r)
@@ -73,49 +77,26 @@ void Game::draw(Renderer r)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glm::mat4 mvp = m_Proj * m_View;
-    glm::vec2 pp = m_Player.m_PlayerPos;
+    glm::vec2 pp = m_Self.m_PlayerPos;
 
     for (auto tiro : m_tiros)
         tiro->draw(r);
 
-    m_Player.draw(r);
-    m_Bot.draw(r);
+    m_Self.draw(r);
+    for (auto &p : m_Players)
+        p->draw(r);
     m_Map[m_CurrentMap]->draw(r, mvp, glm::vec2(pp.x + 0.5f, pp.y + 0.5f));
 }
 
 void Game::update(float fElapsedTime)
 {
-    std::vector<int> to_remove;
-    int p = 0;
-    std::vector<Entity *> &vec = m_Map[m_CurrentMap]->getEntities();
-    for (Entity *e : vec)
-    {
-        Item *i = dynamic_cast<Item *>(e);
-        if (i != NULL)
-        {
-            if (i->getPos().x < m_Player.m_PlayerPos.x + 1 &&
-                i->getPos().x + 1 > m_Player.m_PlayerPos.x &&
-                i->getPos().y < m_Player.m_PlayerPos.y + 1 &&
-                i->getPos().y + 1 > m_Player.m_PlayerPos.y)
-            {
-                m_Player.setBig();
-                delete e;
-                to_remove.push_back(p);
-            }
-        }
-        p++;
-    }
-    for (auto i = to_remove.rbegin(); i < to_remove.rend(); ++i)
-    {
-        vec.erase(vec.begin() + *i);
-    }
-    if (m_Player.m_State == 4)
+    if (m_Self.m_State == 4)
     {
         m_CurrentMap++;
         if (m_CurrentMap < m_MapCount)
         {
-            m_Player.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
-            m_Player.m_State = 0;
+            m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
+            m_Self.m_State = 0;
         }
         else
         {
@@ -124,20 +105,20 @@ void Game::update(float fElapsedTime)
         }
     }
     // if not dead
-    if (m_Player.m_State != 3)
+    if (m_Self.m_State != 3)
     {
         if ((m_keys[GLFW_KEY_SPACE] || m_keys['W']))
         {
-            if (m_Player.m_Ground)
+            if (m_Self.m_Ground)
                 m_Sound->playAudio("jump");
-            m_Player.jump();
+            m_Self.jump();
         }
         if (m_keys['D'])
-            m_Player.moveRight();
+            m_Self.moveRight();
         else if (m_keys['A'])
-            m_Player.moveLeft();
+            m_Self.moveLeft();
         else
-            m_Player.stop();
+            m_Self.stop();
 
         static float accumTime = 0;
         accumTime += fElapsedTime;
@@ -147,8 +128,8 @@ void Game::update(float fElapsedTime)
             pressedE = true;
             glm::vec2 spd = {5.0f, 0.0f};
             accumTime = 0;
-            glm::vec2 pos = m_Player.m_PlayerPos;
-            if (m_Player.m_Mirror)
+            glm::vec2 pos = m_Self.m_PlayerPos;
+            if (m_Self.m_Mirror)
             {
                 spd.x *= -1.0f;
                 pos.x -= 1.0f;
@@ -162,11 +143,11 @@ void Game::update(float fElapsedTime)
     }
 
     static bool music = true;
-    if (m_keys[GLFW_KEY_ENTER] && m_Player.m_State == 3)
+    if (m_keys[GLFW_KEY_ENTER] && m_Self.m_State == 3)
     {
-        m_Player.m_State = 0;
-        m_Player.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
-        m_Player.setSmall();
+        m_Self.m_State = 0;
+        m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
+        m_Self.setSmall();
         if (!music)
         {
             music = true;
@@ -175,13 +156,13 @@ void Game::update(float fElapsedTime)
     }
 
     static int prevState = 0;
-    if (m_Player.m_State == 3 && prevState != 3)
+    if (m_Self.m_State == 3 && prevState != 3)
     {
         m_Sound->pauseAudio("music");
         m_Sound->playAudio("death");
         music = false;
     }
-    prevState = m_Player.m_State;
+    prevState = m_Self.m_State;
 
     static bool keyPrev = false;
     if (m_keys['M'] && m_keys['M'] != keyPrev)
@@ -194,13 +175,15 @@ void Game::update(float fElapsedTime)
     }
     keyPrev = m_keys['M'];
 
-    m_Player.update(fElapsedTime, *m_Map[m_CurrentMap]);
-    m_Bot.update(fElapsedTime, *m_Map[m_CurrentMap]);
+    m_Self.update(fElapsedTime, *m_Map[m_CurrentMap]);
+
+    for (auto &p : m_Players)
+        p->update(fElapsedTime, *m_Map[m_CurrentMap]);
     /*
-    if (m_Player.m_PlayerPos.x - xScreen > 7)
-        xScreen = m_Player.m_PlayerPos.x - 7;
-    if (m_Player.m_PlayerPos.x - xScreen < 1.6)
-        xScreen = m_Player.m_PlayerPos.x - 1.6;
+    if (m_Self.m_PlayerPos.x - xScreen > 7)
+        xScreen = m_Self.m_PlayerPos.x - 7;
+    if (m_Self.m_PlayerPos.x - xScreen < 1.6)
+        xScreen = m_Self.m_PlayerPos.x - 1.6;
 
     if (xScreen < 0.01f)
         xScreen = 0.01f;
@@ -208,7 +191,7 @@ void Game::update(float fElapsedTime)
     if (xScreen > m_Map[m_CurrentMap]->m_width - 32.01f)
         xScreen = m_Map[m_CurrentMap]->m_width - 32.01f;
 
-    yScreen = m_Player.m_PlayerPos.y - 6.5;
+    yScreen = m_Self.m_PlayerPos.y - 6.5;
 
     if (yScreen < 0.01f)
         yScreen = 0.01f;
