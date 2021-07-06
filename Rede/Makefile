@@ -19,7 +19,7 @@ ifeq ($(OS),Windows_NT)
   LDFLAGS = -lwsock32
   CC_FLAGS += -D WIN32
 else
-  LDFLAGS =
+  LDFLAGS = -pthread
 endif
 
 # Command used at clean target
