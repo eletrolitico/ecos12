@@ -16,7 +16,7 @@ CC=g++
 CC_FLAGS = -g -c -Wall -std=c++20
 
 ifeq ($(OS),Windows_NT)
-  LDFLAGS =
+  LDFLAGS = -lwsock32
   CC_FLAGS += -D WIN32
 else
   LDFLAGS =
