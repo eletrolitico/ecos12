@@ -16,10 +16,10 @@ CC=g++
 CC_FLAGS = -g -c -Wall -I ./util -I ./lib -std=c++20
 
 ifeq ($(OS),Windows_NT)
-  LDFLAGS = -lglfw3 -lGLEW32 -lopengl32 -lopenal
+  LDFLAGS = -lglfw3 -lGLEW32 -lopengl32 -lopenal -lws2_32 # -L"ws2_32" -lwsock32
   CC_FLAGS += -D WIN32
 else
-  LDFLAGS = -lglfw -lGLEW -lGL -lopenal
+  LDFLAGS = -lglfw -lGLEW -lGL -lopenal -pthread
 endif
 
 # Command used at clean target
@@ -29,7 +29,7 @@ RM = rm -rf
 all: objFolder $(PROJ_NAME)
 	@ echo 'Done!'
 
-$(PROJ_NAME): $(OBJ) 
+$(PROJ_NAME): $(OBJ)
 	@ echo 'Building binary using GCC linker: $@'
 	$(CC) $^ -o $@ $(LDFLAGS)
 	@ echo 'Finished building binary: $@'

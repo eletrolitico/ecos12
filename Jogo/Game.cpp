@@ -12,6 +12,11 @@
 
 Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
+    if (!Connect("127.0.0.1", 60000))
+    {
+        std::cout << "Falha ao conectar";
+        exit(1);
+    }
     Sprite::m_projection = m_Proj;
     //R grama flutuante esquerda
     //T grama flutuante meio
@@ -51,15 +56,6 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Map.push_back(tempmap);
     m_Self.m_PlayerPos = {2, 3};
 
-    Player *pTmp = new Player(1);
-    pTmp->m_PlayerPos = {30, 3};
-    m_Players.push_back(pTmp);
-
-    pTmp = new Player(2);
-    pTmp->m_PlayerPos = {26.5, 8};
-    pTmp->m_Mirror = true;
-    m_Players.push_back(pTmp);
-
     m_MapCount = 1;
 
     // Sound
@@ -75,13 +71,16 @@ Game::~Game()
     for (auto m : m_Map)
         delete m;
     for (auto p : m_Players)
-        delete p;
+        delete p.second;
 }
 
 void Game::draw(Renderer r)
 {
     glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    if (!IsConnected())
+        return;
 
     glm::mat4 mvp = m_Proj * m_View;
     glm::vec2 pp = m_Self.m_PlayerPos;
@@ -93,11 +92,78 @@ void Game::draw(Renderer r)
 
     m_Self.draw(r);
     for (auto &p : m_Players)
-        p->draw(r);
+        p.second->draw(r);
 }
 
 void Game::update(float fElapsedTime)
 {
+    if (!IsConnected())
+        return;
+
+    while (!Incoming().empty())
+    {
+        auto msg = Incoming().pop_front().msg;
+
+        switch (msg.header.id)
+        {
+        case (GameMsg::Client_Accepted):
+        {
+            std::cout << "Server accepted client - you're in!\n";
+            olc::net::message<GameMsg> msg;
+            msg.header.id = GameMsg::Client_RegisterWithServer;
+            descPlayer.vPos = m_Self.m_PlayerPos;
+            msg << descPlayer;
+            Send(msg);
+            break;
+        }
+
+        case (GameMsg::Client_AssignID):
+        {
+            // Server is assigning us OUR id
+            msg >> nPlayerID;
+            std::cout << "Assigned Client ID = " << nPlayerID << "\n";
+            break;
+        }
+
+        case (GameMsg::Game_AddPlayer):
+        {
+            sPlayerDescription desc;
+            msg >> desc;
+
+            if (desc.nUniqueID == nPlayerID)
+            {
+                // Now we exist in game world
+                bWaitingForConnection = false;
+            }
+            else
+            {
+                m_Players[desc.nUniqueID] = new Player(rand() % 4);
+            }
+            break;
+        }
+
+        case (GameMsg::Game_RemovePlayer):
+        {
+            uint32_t nRemovalID = 0;
+            msg >> nRemovalID;
+            m_Players.erase(nRemovalID);
+            break;
+        }
+
+        case (GameMsg::Game_UpdatePlayer):
+        {
+            sPlayerDescription desc;
+            msg >> desc;
+            if (m_Players.count(desc.nUniqueID) == 0)
+                break;
+            m_Players[desc.nUniqueID]->m_PlayerPos = desc.vPos;
+            m_Players[desc.nUniqueID]->m_PlayerSpeed = desc.vVel;
+
+            break;
+        }
+        }
+    }
+
     // if not dead
     if (m_Self.m_State != 3)
     {
@@ -154,7 +220,7 @@ void Game::update(float fElapsedTime)
 
         for (auto p : m_Players)
         {
-            p->m_State = 0;
+            p.second->m_State = 0;
         }
     }
 
@@ -181,7 +247,7 @@ void Game::update(float fElapsedTime)
     updatePlayer(&m_Self, fElapsedTime);
 
     for (auto p : m_Players)
-        updatePlayer(p, fElapsedTime);
+        updatePlayer(p.second, fElapsedTime);
     /*
     if (m_Self.m_PlayerPos.x - xScreen > 7)
         xScreen = m_Self.m_PlayerPos.x - 7;
@@ -202,19 +268,6 @@ void Game::update(float fElapsedTime)
     if (yScreen > m_Map[m_CurrentMap]->m_height - 18.01f)
         yScreen = m_Map[m_CurrentMap]->m_height - 18.01f;
 */
-    static float accTime = 0;
-    accTime += fElapsedTime;
-    if (m_Players[1]->m_State != 3 && accTime > 1.5f)
-    {
-        accTime = 0;
-        glm::vec2 spd = {-20.0f, 0.0f};
-        glm::vec2 pos = m_Players[1]->m_PlayerPos;
-        pos.y += 0.25f;
-        pos.x -= 2.0f;
-        m_tiros.push_back(new Tiro(pos, spd, false));
-        m_Sound->playAudio("fire");
-    }
-
     m_View = glm::translate(glm::mat4(1), glm::vec3(-xScreen, -yScreen, 0));
     m_Sound->update();
     m_Map[m_CurrentMap]->update(fElapsedTime);
@@ -225,10 +278,21 @@ void Game::update(float fElapsedTime)
             delete m_tiros[i];
             m_tiros.erase(m_tiros.begin() + i);
         }
+
+    // Send player description
+    olc::net::message<GameMsg> msg;
+    msg.header.id = GameMsg::Game_UpdatePlayer;
+    descPlayer.nUniqueID = nPlayerID;
+    descPlayer.vPos = m_Self.m_PlayerPos;
+    descPlayer.vVel = m_Self.m_PlayerSpeed;
+    msg << descPlayer;
+    Send(msg);
 }
 
 void Game::updatePlayer(Player *p, float fElapsedTime)
 {
+    if (p == nullptr)
+        return;
     float g = 50 * fElapsedTime;
     float x = p->m_PlayerPos.x;
     float y = p->m_PlayerPos.y;
@@ -319,14 +383,14 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
         }
 
     for (auto p : m_Players)
-        if (p->m_State != 3)
-            if (((t->m_pos.x > p->m_PlayerPos.x && t->m_pos.x < p->m_PlayerPos.x + p->m_width) ||
-                 (t->m_pos.x + t->m_width > p->m_PlayerPos.x && t->m_pos.x + t->m_width < p->m_PlayerPos.x + p->m_width)) &&
-                ((t->m_pos.y > p->m_PlayerPos.y && t->m_pos.y < p->m_PlayerPos.y + p->m_height) ||
-                 (t->m_pos.y + t->m_height > p->m_PlayerPos.y && t->m_pos.y + t->m_height < p->m_PlayerPos.y + p->m_height)))
+        if (p.second->m_State != 3)
+            if (((t->m_pos.x > p.second->m_PlayerPos.x && t->m_pos.x < p.second->m_PlayerPos.x + p.second->m_width) ||
+                 (t->m_pos.x + t->m_width > p.second->m_PlayerPos.x && t->m_pos.x + t->m_width < p.second->m_PlayerPos.x + p.second->m_width)) &&
+                ((t->m_pos.y > p.second->m_PlayerPos.y && t->m_pos.y < p.second->m_PlayerPos.y + p.second->m_height) ||
+                 (t->m_pos.y + t->m_height > p.second->m_PlayerPos.y && t->m_pos.y + t->m_height < p.second->m_PlayerPos.y + p.second->m_height)))
             {
-                p->m_State = 3;
-                p->m_PlayerSpeed = {0.0f, 0.0f};
+                p.second->m_State = 3;
+                p.second->m_PlayerSpeed = {0.0f, 0.0f};
                 m_Sound->playAudio("death");
                 return true;
             }

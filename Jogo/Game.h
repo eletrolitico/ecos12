@@ -4,6 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "../Rede/net_common.h"
+
 #include "Renderer.h"
 #include "Player.h"
 #include "SoundEngine.h"
@@ -11,7 +13,7 @@
 #include "Sprite.h"
 #include "Tiro.h"
 
-class Game
+class Game : public olc::net::client_interface<GameMsg>
 {
 
 public:
@@ -31,11 +33,15 @@ private:
     int m_CurrentMap = 0;
     int m_MapCount;
     Player m_Self;
-    std::vector<Player *> m_Players;
+    std::unordered_map<uint32_t, Player *> m_Players;
 
     std::vector<Tiro *> m_tiros;
 
     SoundEngine *m_Sound;
+
+    bool bWaitingForConnection = true;
+    sPlayerDescription descPlayer;
+    uint32_t nPlayerID;
 
     void updatePlayer(Player *p, float fElapsedTime);
     bool updateTiro(Tiro *t, float fElapsedTime);

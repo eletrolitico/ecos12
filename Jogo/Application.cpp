@@ -15,8 +15,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
-int win_width = 1600;
-int win_height = 900;
+int win_width = 1280;
+int win_height = 720;
 
 Renderer renderer;
 
