@@ -12,7 +12,7 @@
 
 Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
-    if (!Connect("127.0.0.1", 60000))
+    if (!Connect("187.49.223.35", 60000))
     {
         std::cout << "Falha ao conectar";
         exit(1);
