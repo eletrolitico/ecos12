@@ -28,6 +28,8 @@ public:
 
     void draw(Renderer r);
 
+    void swapTex(int t);
+
     inline void setBig()
     {
         m_IsBig = true;
@@ -40,7 +42,7 @@ public:
     bool m_Mirror = false;
 
 private:
-    std::unique_ptr<Sprite> m_sprite;
+    Sprite *m_sprite;
     bool m_IsBig = false;
     bool m_IsInverted = false;
     float m_Rotation = 0.0f;
