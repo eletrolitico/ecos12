@@ -6,7 +6,7 @@
 
 Player::Player(int texture) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0))
 {
-    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue"};
+    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue", "player_yellow"};
     m_sprite = new Sprite("res/textures/" + vet[texture] + ".png", 1.0f, 1.0f);
     this->texture = texture;
 }
@@ -15,7 +15,7 @@ void Player::swapTex(int t)
 {
     delete m_sprite;
 
-    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue"};
+    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue", "player_yellow"};
     m_sprite = new Sprite("res/textures/" + vet[t] + ".png", 1.0f, 1.0f);
     this->texture = t;
 }

@@ -138,7 +138,7 @@ void Game::update(float fElapsedTime)
             }
             else
             {
-                m_Players[desc.nUniqueID] = new Player(desc.nUniqueID % 4);
+                m_Players[desc.nUniqueID] = new Player(desc.nUniqueID % 5);
             }
             break;
         }
