@@ -134,7 +134,7 @@ void Game::update(float fElapsedTime)
             {
                 // Now we exist in game world
                 bWaitingForConnection = false;
-                m_Self.swapTex(desc.nUniqueID % 4);
+                m_Self.swapTex(desc.nUniqueID % 5);
             }
             else
             {
