@@ -16,7 +16,7 @@ CC=g++
 CC_FLAGS = -g -c -Wall -std=c++20
 
 ifeq ($(OS),Windows_NT)
-  LDFLAGS =  -lws2_32 # -L"ws2_32" -lwsock32
+  LDFLAGS =  -lwsock32 -lws2_32 # -L"ws2_32" 
   CC_FLAGS += -D WIN32
 else
   LDFLAGS = -pthread
