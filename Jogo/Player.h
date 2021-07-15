@@ -32,20 +32,10 @@ public:
 
     void swapTex(int t);
 
-    inline void setBig()
-    {
-        m_IsBig = true;
-    }
-    inline void setSmall()
-    {
-        m_IsBig = false;
-    }
-
     bool m_Mirror = false;
 
 private:
     Sprite *m_sprite;
-    bool m_IsBig = false;
     bool m_IsInverted = false;
     float m_Rotation = 0.0f;
     int texture;

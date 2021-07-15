@@ -230,17 +230,6 @@ void Game::update(float fElapsedTime)
     {
         m_Self.m_State = 0;
         m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
-        m_Self.setSmall();
-        if (!music)
-        {
-            music = true;
-            m_Sound->playAudio("music");
-        }
-
-        for (auto p : m_Players)
-        {
-            p.second->m_State = 0;
-        }
     }
 
     static int prevState = 0;
@@ -304,6 +293,7 @@ void Game::update(float fElapsedTime)
     descPlayer.nUniqueID = m_Self.nPlayerID;
     descPlayer.vPos = m_Self.m_PlayerPos;
     descPlayer.vVel = m_Self.m_PlayerSpeed;
+    descPlayer.state = m_Self.m_State;
     msg << descPlayer;
     Send(msg);
 }
