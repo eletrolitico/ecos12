@@ -11,6 +11,13 @@ Player::Player(int texture) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm
     this->texture = texture;
 }
 
+Player::Player(int texture, uint32_t pID) : m_PlayerPos(glm::vec3(2, 7, 0)), m_PlayerSpeed(glm::vec2(0, 0)), nPlayerID(pID)
+{
+    std::string vet[] = {"player_red", "player_green", "player_purple", "player_blue", "player_yellow"};
+    m_sprite = new Sprite("res/textures/" + vet[texture] + ".png", 1.0f, 1.0f);
+    this->texture = texture;
+}
+
 void Player::swapTex(int t)
 {
     delete m_sprite;

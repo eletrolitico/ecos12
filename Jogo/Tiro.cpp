@@ -2,7 +2,7 @@
 
 Sprite *Tiro::m_sprite = nullptr;
 
-Tiro::Tiro(glm::vec2 pos, glm::vec2 speed, bool isSelf) : m_pos(pos), m_speed(speed), m_isSelf(isSelf)
+Tiro::Tiro(glm::vec2 pos, glm::vec2 speed, uint32_t pID) : m_pos(pos), m_speed(speed), m_playerID(pID)
 {
     if (m_sprite == nullptr)
     {

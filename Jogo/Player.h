@@ -16,8 +16,10 @@ public:
     // 0=idle 1=walking 2=jumping, 3 = dead, 4 = next stage
     int m_State = 0;
     float m_width = 0.5f, m_height = 1.0f;
+    uint32_t nPlayerID = 0;
 
     Player(int texture);
+    Player(int texture, uint32_t pID);
     ~Player();
 
     void moveLeft();

@@ -8,7 +8,7 @@
 class Tiro
 {
 public:
-    Tiro(glm::vec2 pos, glm::vec2 speed, bool isSelf);
+    Tiro(glm::vec2 pos, glm::vec2 speed, uint32_t pID);
     ~Tiro();
 
     void draw(Renderer r);
@@ -16,7 +16,7 @@ public:
 
     glm::vec2 m_pos, m_speed;
     float m_width = 3 * 0.68f, m_height = 3 * 0.09f;
-    bool m_isSelf;
+    uint32_t m_playerID;
 
 private:
     static Sprite *m_sprite;

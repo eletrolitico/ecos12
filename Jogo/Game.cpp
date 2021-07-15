@@ -120,8 +120,8 @@ void Game::update(float fElapsedTime)
         case (GameMsg::Client_AssignID):
         {
             // Server is assigning us OUR id
-            msg >> nPlayerID;
-            std::cout << "Assigned Client ID = " << nPlayerID << "\n";
+            msg >> m_Self.nPlayerID;
+            std::cout << "Assigned Client ID = " << m_Self.nPlayerID << "\n";
             break;
         }
 
@@ -130,7 +130,7 @@ void Game::update(float fElapsedTime)
             sPlayerDescription desc;
             msg >> desc;
 
-            if (desc.nUniqueID == nPlayerID)
+            if (desc.nUniqueID == m_Self.nPlayerID)
             {
                 // Now we exist in game world
                 bWaitingForConnection = false;
@@ -138,7 +138,7 @@ void Game::update(float fElapsedTime)
             }
             else
             {
-                m_Players[desc.nUniqueID] = new Player(desc.nUniqueID % 5);
+                m_Players[desc.nUniqueID] = new Player(desc.nUniqueID % 5, desc.nUniqueID);
             }
             break;
         }
@@ -159,7 +159,16 @@ void Game::update(float fElapsedTime)
                 break;
             m_Players[desc.nUniqueID]->m_PlayerPos = desc.vPos;
             m_Players[desc.nUniqueID]->m_PlayerSpeed = desc.vVel;
+            m_Players[desc.nUniqueID]->m_State = desc.state;
 
+            break;
+        }
+        case (GameMsg::Game_Fire):
+        {
+            sFireBall fire;
+            msg >> fire;
+            m_tiros.push_back(new Tiro(fire.vPos, fire.vVel, fire.playerID));
+            m_Sound->playAudio("fire");
             break;
         }
         }
@@ -199,8 +208,17 @@ void Game::update(float fElapsedTime)
                 pos.x -= 1.0f;
             }
             pos.y += 0.25f;
-            m_tiros.push_back(new Tiro(pos, spd, true));
+            m_tiros.push_back(new Tiro(pos, spd, m_Self.nPlayerID));
             m_Sound->playAudio("fire");
+
+            olc::net::message<GameMsg> msg;
+            msg.header.id = GameMsg::Game_Fire;
+            struct sFireBall fire;
+            fire.playerID = m_Self.nPlayerID;
+            fire.vPos = pos;
+            fire.vVel = spd;
+            msg << fire;
+            Send(msg);
         }
 
         if (!m_keys['E'])
@@ -283,7 +301,7 @@ void Game::update(float fElapsedTime)
     // Send player description
     olc::net::message<GameMsg> msg;
     msg.header.id = GameMsg::Game_UpdatePlayer;
-    descPlayer.nUniqueID = nPlayerID;
+    descPlayer.nUniqueID = m_Self.nPlayerID;
     descPlayer.vPos = m_Self.m_PlayerPos;
     descPlayer.vVel = m_Self.m_PlayerSpeed;
     msg << descPlayer;
@@ -350,7 +368,16 @@ void Game::updatePlayer(Player *p, float fElapsedTime)
     else
     {
         p->m_PlayerPos.x += mv.x;
+        if (p->m_PlayerSpeed.x > 0.01)
+            p->m_Mirror = false;
+        else if (p->m_PlayerSpeed.x < -0.01)
+            p->m_Mirror = true;
     }
+
+    if (abs(p->m_PlayerSpeed.x) > 0.01)
+        p->m_State = 1;
+    else
+        p->m_State = 0;
 
     if (!p->m_Ground)
         p->m_State = 2;
@@ -371,7 +398,7 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
         return true;
     }
 
-    if (!t->m_isSelf)
+    if (m_Self.m_State != 3 && t->m_playerID != m_Self.nPlayerID)
         if (((t->m_pos.x > m_Self.m_PlayerPos.x && t->m_pos.x < m_Self.m_PlayerPos.x + m_Self.m_width) ||
              (t->m_pos.x + t->m_width > m_Self.m_PlayerPos.x && t->m_pos.x + t->m_width < m_Self.m_PlayerPos.x + m_Self.m_width)) &&
             ((t->m_pos.y > m_Self.m_PlayerPos.y && t->m_pos.y < m_Self.m_PlayerPos.y + m_Self.m_height) ||
@@ -384,7 +411,7 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
         }
 
     for (auto p : m_Players)
-        if (p.second->m_State != 3)
+        if (p.second->m_State != 3 && p.second->nPlayerID != t->m_playerID)
             if (((t->m_pos.x > p.second->m_PlayerPos.x && t->m_pos.x < p.second->m_PlayerPos.x + p.second->m_width) ||
                  (t->m_pos.x + t->m_width > p.second->m_PlayerPos.x && t->m_pos.x + t->m_width < p.second->m_PlayerPos.x + p.second->m_width)) &&
                 ((t->m_pos.y > p.second->m_PlayerPos.y && t->m_pos.y < p.second->m_PlayerPos.y + p.second->m_height) ||

@@ -41,7 +41,6 @@ private:
 
     bool bWaitingForConnection = true;
     sPlayerDescription descPlayer;
-    uint32_t nPlayerID;
 
     void updatePlayer(Player *p, float fElapsedTime);
     bool updateTiro(Tiro *t, float fElapsedTime);
