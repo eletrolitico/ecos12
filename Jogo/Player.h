@@ -34,6 +34,8 @@ public:
 
     bool m_Mirror = false;
 
+    std::string m_name = "Player";
+
 private:
     Sprite *m_sprite;
     bool m_IsInverted = false;
@@ -41,6 +43,8 @@ private:
     int texture;
     int m_Frame = 0;
     float accumTime = 0.0f;
+
+    uint8_t m_vida = 10;
 };
 
 #endif

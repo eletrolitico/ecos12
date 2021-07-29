@@ -12,12 +12,13 @@
 #include "Map.h"
 #include "Sprite.h"
 #include "Tiro.h"
+#include "Text.h"
 
 class Game : public olc::net::client_interface<GameMsg>
 {
 
 public:
-    Game();
+    Game(const std::string &name);
     ~Game();
     void draw(Renderer r);
     void update(float);
@@ -38,6 +39,7 @@ private:
     std::vector<Tiro *> m_tiros;
 
     SoundEngine *m_Sound;
+    Text *m_Text;
 
     bool bWaitingForConnection = true;
     sPlayerDescription descPlayer;

@@ -13,7 +13,7 @@ public:
 
     static glm::mat4 m_projection;
 
-    void Draw(Renderer r, glm::vec2 pos, bool inverted = false);
+    void Draw(Renderer r, glm::vec2 pos, bool inverted = false, float scale = 1.0f);
 
     /*! @brief Desenha parte da textura na área da sprite
      * o sx,sy,ex,ey definem um retângulo em píxeis
@@ -25,7 +25,7 @@ public:
      * @param[in] ex x do fim do retângulo
      * @param[in] ey y do fim do retângulo
      */
-    void DrawPartial(Renderer r, glm::vec2 pos, int sx, int sy, int ex, int ey, bool inverted = false);
+    void DrawPartial(Renderer r, glm::vec2 pos, int sx, int sy, int ex, int ey, bool inverted = false, float scale = 1.0f);
 
     void setWidth(float w) { m_width = w; }
     void setHeight(float h) { m_height = h; }
@@ -34,11 +34,11 @@ private:
     std::unique_ptr<Shader> m_Shader;
     std::unique_ptr<VertexArray> m_VAO;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
-    std::unique_ptr<Texture> m_Texture;
-
-    float m_width, m_height;
-
     glm::mat4 m_view{glm::mat4(1)};
+
+protected:
+    std::unique_ptr<Texture> m_Texture;
+    float m_width, m_height;
 };
 
 #endif

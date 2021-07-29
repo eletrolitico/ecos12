@@ -46,12 +46,12 @@ Sprite::Sprite(const std::string &file, float width, float height) : m_width(wid
 
 Sprite::~Sprite() {}
 
-void Sprite::Draw(Renderer r, glm::vec2 pos, bool inverted)
+void Sprite::Draw(Renderer r, glm::vec2 pos, bool inverted, float scale)
 {
-    DrawPartial(r, pos, 0, 0, m_Texture->GetWidth(), m_Texture->GetHeight(), inverted);
+    DrawPartial(r, pos, 0, 0, m_Texture->GetWidth(), m_Texture->GetHeight(), inverted, scale);
 }
 
-void Sprite::DrawPartial(Renderer r, glm::vec2 pos, int startx, int starty, int endx, int endy, bool inverted)
+void Sprite::DrawPartial(Renderer r, glm::vec2 pos, int startx, int starty, int endx, int endy, bool inverted, float scale)
 {
     float sx = (float)startx / m_Texture->GetWidth();
     float ex = (float)endx / m_Texture->GetWidth();
@@ -63,7 +63,7 @@ void Sprite::DrawPartial(Renderer r, glm::vec2 pos, int startx, int starty, int 
     m_Shader->setUniformMat4f("u_Projection", m_projection);
     m_Shader->setUniformMat4f("u_View", m_view);
 
-    glm::mat4 model = glm::translate(glm::vec3(pos.x, pos.y, 0)) * glm::scale(glm::vec3(m_width, m_height, 0));
+    glm::mat4 model = glm::translate(glm::vec3(pos.x, pos.y, 0)) * glm::scale(glm::vec3(scale * m_width, scale * m_height, 0));
     m_Shader->setUniformMat4f("u_Model", model);
 
     m_Shader->setUniform2f("u_TexScale", glm::vec2(ex - sx, ey - sy));

@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include "VertexBufferLayout.h"
+#include "Text.h"
 
 #include <glm/gtx/transform.hpp>
 
@@ -35,8 +36,12 @@ Player::~Player()
 void Player::draw(Renderer r)
 {
     auto drawPos = m_PlayerPos;
-    drawPos.x -= 0.2;
+    auto textPos = m_PlayerPos;
+    drawPos.x -= 0.2f;
+    textPos.y += 1.0f;
+    textPos.x -= 0.5f;
     m_sprite->DrawPartial(r, drawPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
+    Text::GetText()->DrawString(r, textPos, 0.2f, m_name + ": " + std::to_string(m_vida));
 }
 
 void Player::update_frame(float fElapsedTime)

@@ -26,6 +26,8 @@ enum class GameMsg : uint32_t
 struct sPlayerDescription
 {
     uint32_t nUniqueID = 0;
+    char nome[30];
+    uint8_t vida = 10;
 
     glm::vec2 vPos;
     glm::vec2 vVel;

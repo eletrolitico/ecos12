@@ -39,7 +39,7 @@ Map::Map(std::string map, int w, int h, int iniX, int iniY, float ambientLight) 
                 {
                     positions[index++] = temp[k];
                 }
-                delete temp;
+                delete[] temp;
             }
         }
     }

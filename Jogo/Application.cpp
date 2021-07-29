@@ -56,6 +56,12 @@ static void resize_callback(GLFWwindow *win, int w, int h)
 
 int main(int argc, char **argv)
 {
+    std::string name;
+    if (argc > 1)
+        name = std::string(argv[1]);
+    else
+        name = "Player";
+
     GLFWwindow *window;
 
     glfwSetErrorCallback(error_callback);
@@ -109,7 +115,7 @@ int main(int argc, char **argv)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 
-    game = new Game();
+    game = new Game(name);
 
     int frame = 0;
     double elapsedTime, timebase = 0, lastTime = 0;

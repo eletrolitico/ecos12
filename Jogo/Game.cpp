@@ -8,9 +8,11 @@
 
 #include "Sprite.h"
 
+#include <string.h>
+
 #define VELOCIDADE_FOGO 20.0f
 
-Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
+Game::Game(const std::string &name) : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
     if (!Connect("127.0.0.1", 60000))
     {
@@ -55,6 +57,7 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     m_Map.push_back(tempmap);
     m_Self.m_PlayerPos = {2, 3};
+    m_Self.m_name = name;
 
     m_MapCount = 1;
 
@@ -64,6 +67,9 @@ Game::Game() : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
     m_Sound->loadAudio("res/audio/fireball.ogg", "fire", 0.2f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
+
+    // Text
+    m_Text = Text::GetText();
 }
 
 Game::~Game()
@@ -93,6 +99,9 @@ void Game::draw(Renderer r)
     m_Self.draw(r);
     for (auto &p : m_Players)
         p.second->draw(r);
+
+    m_Text->DrawString(r, {1.0f, 8.0f}, 0.2f, "String de teste! 1234567890");
+    m_Text->DrawString(r, {1.3f, 14.0f}, 0.2f, "String 2");
 }
 
 void Game::update(float fElapsedTime)
@@ -160,6 +169,7 @@ void Game::update(float fElapsedTime)
             m_Players[desc.nUniqueID]->m_PlayerPos = desc.vPos;
             m_Players[desc.nUniqueID]->m_PlayerSpeed = desc.vVel;
             m_Players[desc.nUniqueID]->m_State = desc.state;
+            m_Players[desc.nUniqueID]->m_name = desc.nome;
 
             break;
         }
@@ -294,6 +304,7 @@ void Game::update(float fElapsedTime)
     descPlayer.vPos = m_Self.m_PlayerPos;
     descPlayer.vVel = m_Self.m_PlayerSpeed;
     descPlayer.state = m_Self.m_State;
+    strcpy(descPlayer.nome, m_Self.m_name.c_str());
     msg << descPlayer;
     Send(msg);
 }
