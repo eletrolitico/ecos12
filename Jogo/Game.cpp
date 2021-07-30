@@ -14,7 +14,7 @@
 
 Game::Game(const std::string &name) : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
-    if (!Connect("127.0.0.1", 60000))
+    if (!Connect("187.49.223.35", 60000))
     {
         std::cout << "Falha ao conectar";
         exit(1);
@@ -423,9 +423,14 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
                 ((t->m_pos.y > p.second->m_PlayerPos.y && t->m_pos.y < p.second->m_PlayerPos.y + p.second->m_height) ||
                  (t->m_pos.y + t->m_height > p.second->m_PlayerPos.y && t->m_pos.y + t->m_height < p.second->m_PlayerPos.y + p.second->m_height)))
             {
-                p.second->m_State = 3;
-                p.second->m_PlayerSpeed = {0.0f, 0.0f};
-                m_Sound->playAudio("death");
+                p.second->m_vida--;
+                if (p.second->m_vida == 0)
+                {
+
+                    p.second->m_State = 3;
+                    p.second->m_PlayerSpeed = {0.0f, 0.0f};
+                    m_Sound->playAudio("death");
+                }
                 return true;
             }
 
