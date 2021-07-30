@@ -37,7 +37,7 @@ void Player::draw(Renderer r)
 {
     auto drawPos = m_PlayerPos;
     auto textPos = m_PlayerPos;
-    std::string str = m_name + "|" + std::to_string(m_vida);
+    std::string str = m_name + ":" + std::to_string(m_vida);
     drawPos.x -= 0.2f;
     textPos.y += 1.0f;
     textPos.x -= 0.25f * ((str.length() - 3) / 2.0f) - 0.25f;
