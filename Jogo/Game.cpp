@@ -99,9 +99,6 @@ void Game::draw(Renderer r)
     m_Self.draw(r);
     for (auto &p : m_Players)
         p.second->draw(r);
-
-    m_Text->DrawString(r, {1.0f, 8.0f}, 0.2f, "String de teste! 1234567890");
-    m_Text->DrawString(r, {1.3f, 14.0f}, 0.2f, "String 2");
 }
 
 void Game::update(float fElapsedTime)
@@ -239,6 +236,7 @@ void Game::update(float fElapsedTime)
     if (m_keys[GLFW_KEY_ENTER] && m_Self.m_State == 3)
     {
         m_Self.m_State = 0;
+        m_Self.m_vida = 10;
         m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
     }
 
@@ -349,6 +347,7 @@ void Game::updatePlayer(Player *p, float fElapsedTime)
     if (m_Map[m_CurrentMap]->getDanger(x, y + mv.y, x + p->m_width, y + mv.y) && mv.y < 0)
     {
         p->m_State = 3;
+        p->m_vida = 0;
         p->m_PlayerSpeed = {0.0f, 0.0f};
         p->update_frame(fElapsedTime);
         m_Sound->playAudio("death");
@@ -405,9 +404,13 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
             ((t->m_pos.y > m_Self.m_PlayerPos.y && t->m_pos.y < m_Self.m_PlayerPos.y + m_Self.m_height) ||
              (t->m_pos.y + t->m_height > m_Self.m_PlayerPos.y && t->m_pos.y + t->m_height < m_Self.m_PlayerPos.y + m_Self.m_height)))
         {
-            m_Self.m_State = 3;
-            m_Self.m_PlayerSpeed = {0.0f, 0.0f};
-            m_Sound->playAudio("death");
+            m_Self.m_vida--;
+            if (m_Self.m_vida <= 0)
+            {
+                m_Self.m_State = 3;
+                m_Self.m_PlayerSpeed = {0.0f, 0.0f};
+                m_Sound->playAudio("death");
+            }
             return true;
         }
 

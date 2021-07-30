@@ -35,6 +35,7 @@ public:
     bool m_Mirror = false;
 
     std::string m_name = "Player";
+    uint8_t m_vida = 10;
 
 private:
     Sprite *m_sprite;
@@ -43,8 +44,6 @@ private:
     int texture;
     int m_Frame = 0;
     float accumTime = 0.0f;
-
-    uint8_t m_vida = 10;
 };
 
 #endif
