@@ -37,11 +37,12 @@ void Player::draw(Renderer r)
 {
     auto drawPos = m_PlayerPos;
     auto textPos = m_PlayerPos;
+    std::string str = m_name + "|" + std::to_string(m_vida);
     drawPos.x -= 0.2f;
     textPos.y += 1.0f;
-    textPos.x -= 0.5f;
+    textPos.x -= 0.25f * ((str.length() - 3) / 2.0f) - 0.25f;
     m_sprite->DrawPartial(r, drawPos, m_Frame * 32, (3 - m_State) * 32, (m_Frame + 1) * 32, (4 - m_State) * 32, m_Mirror);
-    Text::GetText()->DrawString(r, textPos, 0.2f, m_name + ": " + std::to_string(m_vida));
+    Text::GetText()->DrawString(r, textPos, 0.25f, str);
 }
 
 void Player::update_frame(float fElapsedTime)
