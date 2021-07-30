@@ -167,6 +167,7 @@ void Game::update(float fElapsedTime)
             m_Players[desc.nUniqueID]->m_PlayerSpeed = desc.vVel;
             m_Players[desc.nUniqueID]->m_State = desc.state;
             m_Players[desc.nUniqueID]->m_name = desc.nome;
+            m_Players[desc.nUniqueID]->m_vida = desc.vida;
 
             break;
         }
@@ -303,6 +304,7 @@ void Game::update(float fElapsedTime)
     descPlayer.vVel = m_Self.m_PlayerSpeed;
     descPlayer.state = m_Self.m_State;
     strcpy(descPlayer.nome, m_Self.m_name.c_str());
+    descPlayer.vida = m_Self.m_vida;
     msg << descPlayer;
     Send(msg);
 }
