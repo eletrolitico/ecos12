@@ -12,6 +12,7 @@ public:
 
     std::unordered_map<uint32_t, sPlayerDescription> m_mapPlayerRoster;
     std::vector<uint32_t> m_vGarbageIDs;
+    int m_nCurrentMap = 0;
 
 protected:
     bool OnClientConnect(std::shared_ptr<olc::net::connection<GameMsg>> client) override
@@ -74,6 +75,7 @@ protected:
             olc::net::message<GameMsg> msgSendID;
             msgSendID.header.id = GameMsg::Client_AssignID;
             msgSendID << desc.nUniqueID;
+            msgSendID << m_nCurrentMap;
             MessageClient(client, msgSendID);
 
             olc::net::message<GameMsg> msgAddPlayer;
@@ -99,9 +101,15 @@ protected:
 
         case GameMsg::Game_UpdatePlayer:
         case GameMsg::Game_Fire:
-        case GameMsg::Game_NextMap:
         {
             // Simply bounce update to everyone except incoming client
+            MessageAllClients(msg, client);
+            break;
+        }
+        case GameMsg::Game_NextMap:
+        {
+            msg >> m_nCurrentMap;
+            msg << m_nCurrentMap;
             MessageAllClients(msg, client);
             break;
         }
