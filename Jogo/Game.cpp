@@ -74,7 +74,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
 
-    tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
+    tempmap = new Map(tmp, 32, 15, 16, 3, 1.0);
     m_Map.push_back(tempmap);
 
     tmp = "";
@@ -97,7 +97,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     m_Map.push_back(tempmap);
 
-    m_Self.m_PlayerPos = {2, 3};
+    //m_Self.m_PlayerPos = {2, 3};
     m_Self.m_name = name;
 
     m_MapCount = 2;
@@ -294,8 +294,9 @@ void Game::update(float fElapsedTime)
     {
         m_Self.m_State = 0;
         m_Self.m_vida = 3;
-        if (m_CurrentMap + 1 < m_MapCount)
-            m_CurrentMap++;
+        m_CurrentMap++;
+        if (m_CurrentMap >= m_MapCount)
+            m_CurrentMap = 0;
         m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
 
         olc::net::message<GameMsg> msg;
