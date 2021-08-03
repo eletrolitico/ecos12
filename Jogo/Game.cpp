@@ -78,11 +78,12 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     m_Map.push_back(tempmap);
 
     tmp = "";
+    tmp += ".HHHH.HHHH.HHHH.HHHHH.H....HHHH.";
+    tmp += ".H....H..H.H......H...H....H....";
+    tmp += ".H....HHHH.HHHH...H...H....HHH..";
+    tmp += ".H....H..H....H...H...H....H....";
+    tmp += ".HHHH.H..H.HHHH...H...HHHH.HHHH.";
     tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
     tmp += "HHHHHWWWWWWWWWWWWWWWWWWWWWWWWHHH";
     tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
     tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
@@ -90,11 +91,11 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "WWWWWWWWWWWWWHWWWWWWWWWWWWWWWWWW";
     tmp += "WWWWWWWWWWWWHHWWWWWWWWWWWWWWWWWW";
     tmp += "WWWWWPPWWWWHHHWPPPPWWWWWWWWWWWWW";
-    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHF";
-    tmp += "UUUHHHUUUUHHHHHHUUUUUUHHHHHHUUUU";
+    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
     tmp += "SSSSSSSSSSSSSSHHSSSSSSSSSSSSSSSS";
 
-    tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
+    tempmap = new Map(tmp, 32, 16, 2, 3, 1.0);
     m_Map.push_back(tempmap);
 
     //m_Self.m_PlayerPos = {2, 3};
