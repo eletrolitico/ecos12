@@ -146,8 +146,8 @@ void Game::update(float fElapsedTime)
         case (GameMsg::Client_AssignID):
         {
             // Server is assigning us OUR id
-            msg >> m_Self.nPlayerID;
             msg >> m_CurrentMap;
+            msg >> m_Self.nPlayerID;
             m_Self.m_State = 0;
             m_Self.m_vida = 3;
             m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
