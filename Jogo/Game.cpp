@@ -290,8 +290,11 @@ void Game::update(float fElapsedTime)
     }
 
     static bool music = true;
-    if (m_keys[GLFW_KEY_ENTER] && isAllDed())
+    static bool enter = false;
+
+    if (m_keys[GLFW_KEY_ENTER] && isAllDed() && !enter)
     {
+        enter = true;
         m_Self.m_State = 0;
         m_Self.m_vida = 3;
         m_CurrentMap++;
@@ -304,6 +307,8 @@ void Game::update(float fElapsedTime)
         msg << m_CurrentMap;
         Send(msg);
     }
+    if (!m_keys[GLFW_KEY_ENTER])
+        enter = false;
 
     static int prevState = 0;
     if (m_Self.m_State == 3 && prevState != 3)
