@@ -70,7 +70,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "ED............................ED";
     tmp += "EGGD........................EGGD";
     tmp += "EGGGGDO..................OEGGGGD";
-    tmp += "LUUUUUGGGGGGGGGGGGGGGGGGGGUUUUUK";
+    tmp += "LUUUUUEGGGGGGGGGGGGGGGGGGDUUUUUK";
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
 
@@ -100,7 +100,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     //m_Self.m_PlayerPos = {2, 3};
     m_Self.m_name = name;
 
-    m_MapCount = 2;
+    m_MapCount = m_Map.size();
 
     // Sound
     m_Sound = SoundEngine::GetInstance();
