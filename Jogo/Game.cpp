@@ -61,18 +61,39 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "................................";
     tmp += "................................";
     tmp += "................................";
+    tmp += "...............OO...............";
+    tmp += ".............RTTTTY.............";
+    tmp += "........RY............RY........";
     tmp += "................................";
+    tmp += "....RTY....RTY....RTY....RTY....";
     tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "................................";
-    tmp += "..............OOOO..............";
-    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGD";
+    tmp += "ED............................ED";
+    tmp += "EGGD........................EGGD";
+    tmp += "EGGGGDO..................OEGGGGD";
+    tmp += "LUUUUUGGGGGGGGGGGGGGGGGGGGUUUUUK";
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
+
+    tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
+    m_Map.push_back(tempmap);
+
+    tmp = "";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+    tmp += "HHHHHWWWWWWWWWWWWWWWWWWWWWWWWHHH";
+    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
+    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
+    tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
+    tmp += "WWWWWWWWWWWWWHWWWWWWWWWWWWWWWWWW";
+    tmp += "WWWWWWWWWWWWHHWWWWWWWWWWWWWWWWWW";
+    tmp += "WWWWWPPWWWWHHHWPPPPWWWWWWWWWWWWW";
+    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHF";
+    tmp += "UUUHHHUUUUHHHHHHUUUUUUHHHHHHUUUU";
+    tmp += "SSSSSSSSSSSSSSHHSSSSSSSSSSSSSSSS";
+
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     m_Map.push_back(tempmap);
 
