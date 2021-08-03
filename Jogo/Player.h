@@ -35,7 +35,7 @@ public:
     bool m_Mirror = false;
 
     std::string m_name = "Player";
-    uint8_t m_vida = 10;
+    uint8_t m_vida = 3;
 
 private:
     Sprite *m_sprite;

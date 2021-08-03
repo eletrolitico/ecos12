@@ -27,7 +27,7 @@ struct sPlayerDescription
 {
     uint32_t nUniqueID = 0;
     char nome[30];
-    uint8_t vida = 10;
+    uint8_t vida = 3;
 
     glm::vec2 vPos;
     glm::vec2 vVel;

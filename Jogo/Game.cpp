@@ -237,7 +237,7 @@ void Game::update(float fElapsedTime)
     if (m_keys[GLFW_KEY_ENTER] && m_Self.m_State == 3)
     {
         m_Self.m_State = 0;
-        m_Self.m_vida = 10;
+        m_Self.m_vida = 3;
         m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
     }
 
