@@ -12,9 +12,9 @@
 
 #define VELOCIDADE_FOGO 20.0f
 
-Game::Game(const std::string &name) : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
+Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0.0f, 32.0f, 0.0f, 18.0f)), m_View(glm::mat4(1)), m_Self(0)
 {
-    if (!Connect("187.49.223.35", 60000))
+    if (!Connect(ip, 60000))
     {
         std::cout << "Falha ao conectar";
         exit(1);

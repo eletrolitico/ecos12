@@ -56,9 +56,18 @@ static void resize_callback(GLFWwindow *win, int w, int h)
 
 int main(int argc, char **argv)
 {
+
+    if (argc < 2)
+    {
+        std::cout << "O primeiro parametro é necessário e deve ser o ip" << std::endl;
+        exit(1);
+    }
+
+    std::string ip = std::string(argv[1]);
+
     std::string name;
-    if (argc > 1)
-        name = std::string(argv[1]);
+    if (argc > 2)
+        name = std::string(argv[2]);
     else
         name = "Player";
 
@@ -115,7 +124,7 @@ int main(int argc, char **argv)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 
-    game = new Game(name);
+    game = new Game(ip, name);
 
     int frame = 0;
     double elapsedTime, timebase = 0, lastTime = 0;

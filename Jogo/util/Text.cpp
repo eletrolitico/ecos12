@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-#define CHAR_WIDTH 1.0f
+#define LARGURA_CHAR 1.0f
 
 Text *Text::instance = nullptr;
 
-Text::Text() : Sprite("res/textures/font.png", CHAR_WIDTH, CHAR_WIDTH) {}
+Text::Text() : Sprite("res/textures/font.png", LARGURA_CHAR, LARGURA_CHAR) {}
 
 Text *Text::GetText()
 {
@@ -26,7 +26,7 @@ void Text::DrawString(Renderer r, glm::vec2 pos, float scale, const std::string 
         int y = index / 16;
         DrawPartial(r, pos, x * 8, m_Texture->GetHeight() - ((y + 1) * 8), (x + 1) * 8, m_Texture->GetHeight() - (y * 8), false, scale);
 
-        pos.x += CHAR_WIDTH * scale;
+        pos.x += LARGURA_CHAR * scale;
         cStr++;
     }
 }

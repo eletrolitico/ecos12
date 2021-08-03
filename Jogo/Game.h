@@ -18,7 +18,7 @@ class Game : public olc::net::client_interface<GameMsg>
 {
 
 public:
-    Game(const std::string &name);
+    Game(const std::string &ip, const std::string &name);
     ~Game();
     void draw(Renderer r);
     void update(float);
