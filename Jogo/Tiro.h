@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <unordered_map>
 #include "Sprite.h"
 
 class Tiro
@@ -19,7 +20,7 @@ public:
     uint32_t m_playerID;
 
 private:
-    static Sprite *m_sprite;
+    static std::unordered_map<int, Sprite *> m_sprite;
     int m_vFrame = 0, m_hFrame = 0;
     float m_acum_time = 0.0f;
 };

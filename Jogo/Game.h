@@ -48,6 +48,7 @@ private:
     bool updateTiro(Tiro *t, float fElapsedTime);
 
     Tile getTile(char, int);
+    bool isAllDed();
 };
 
 #endif

@@ -99,6 +99,7 @@ protected:
 
         case GameMsg::Game_UpdatePlayer:
         case GameMsg::Game_Fire:
+        case GameMsg::Game_NextMap:
         {
             // Simply bounce update to everyone except incoming client
             MessageAllClients(msg, client);

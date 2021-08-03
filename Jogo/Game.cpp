@@ -56,10 +56,30 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
     tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
     m_Map.push_back(tempmap);
+
+    tmp = "";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "................................";
+    tmp += "..............OOOO..............";
+    tmp += "EGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGD";
+    tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
+    tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
+    tempmap = new Map(tmp, 32, 15, 2, 3, 1.0);
+    m_Map.push_back(tempmap);
+
     m_Self.m_PlayerPos = {2, 3};
     m_Self.m_name = name;
 
-    m_MapCount = 1;
+    m_MapCount = 2;
 
     // Sound
     m_Sound = SoundEngine::GetInstance();
@@ -165,6 +185,10 @@ void Game::update(float fElapsedTime)
                 break;
             m_Players[desc.nUniqueID]->m_PlayerPos = desc.vPos;
             m_Players[desc.nUniqueID]->m_PlayerSpeed = desc.vVel;
+            if (m_Players[desc.nUniqueID]->m_State != 3 && desc.state == 3)
+            {
+                m_Sound->playAudio("death");
+            }
             m_Players[desc.nUniqueID]->m_State = desc.state;
             m_Players[desc.nUniqueID]->m_name = desc.nome;
             m_Players[desc.nUniqueID]->m_vida = desc.vida;
@@ -178,6 +202,13 @@ void Game::update(float fElapsedTime)
             m_tiros.push_back(new Tiro(fire.vPos, fire.vVel, fire.playerID));
             m_Sound->playAudio("fire");
             break;
+        }
+        case (GameMsg::Game_NextMap):
+        {
+            msg >> m_CurrentMap;
+            m_Self.m_State = 0;
+            m_Self.m_vida = 3;
+            m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
         }
         }
     }
@@ -234,11 +265,18 @@ void Game::update(float fElapsedTime)
     }
 
     static bool music = true;
-    if (m_keys[GLFW_KEY_ENTER] && m_Self.m_State == 3)
+    if ((m_keys[GLFW_KEY_ENTER] && m_Self.m_State != 3 && isAllDed()) || (m_Self.m_State == 3 && isAllDed()))
     {
         m_Self.m_State = 0;
         m_Self.m_vida = 3;
+        if (m_CurrentMap + 1 < m_MapCount)
+            m_CurrentMap++;
         m_Self.m_PlayerPos = m_Map[m_CurrentMap]->getInitialPos();
+
+        olc::net::message<GameMsg> msg;
+        msg.header.id = GameMsg::Game_NextMap;
+        msg << m_CurrentMap;
+        Send(msg);
     }
 
     static int prevState = 0;
@@ -348,12 +386,15 @@ void Game::updatePlayer(Player *p, float fElapsedTime)
 
     if (m_Map[m_CurrentMap]->getDanger(x, y + mv.y, x + p->m_width, y + mv.y) && mv.y < 0)
     {
-        p->m_State = 3;
         p->m_vida = 0;
         p->m_PlayerSpeed = {0.0f, 0.0f};
-        p->update_frame(fElapsedTime);
-        m_Sound->playAudio("death");
-        return;
+        if (p == &m_Self)
+        {
+            p->m_State = 3;
+            p->update_frame(fElapsedTime);
+            m_Sound->playAudio("death");
+            return;
+        }
     }
 
     y = p->m_PlayerPos.y;
@@ -424,13 +465,6 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
                  (t->m_pos.y + t->m_height > p.second->m_PlayerPos.y && t->m_pos.y + t->m_height < p.second->m_PlayerPos.y + p.second->m_height)))
             {
                 p.second->m_vida--;
-                if (p.second->m_vida == 0)
-                {
-
-                    p.second->m_State = 3;
-                    p.second->m_PlayerSpeed = {0.0f, 0.0f};
-                    m_Sound->playAudio("death");
-                }
                 return true;
             }
 
@@ -445,4 +479,12 @@ void Game::keyboardDown(int key)
 void Game::keyboardUp(int key)
 {
     m_keys[key] = false;
+}
+
+bool Game::isAllDed()
+{
+    for (auto p : m_Players)
+        if (p.second->m_State != 3)
+            return false;
+    return true;
 }

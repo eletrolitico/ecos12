@@ -21,6 +21,7 @@ enum class GameMsg : uint32_t
     Game_RemovePlayer,
     Game_UpdatePlayer,
     Game_Fire,
+    Game_NextMap,
 };
 
 struct sPlayerDescription
