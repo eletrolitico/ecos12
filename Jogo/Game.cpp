@@ -108,6 +108,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     m_Sound->loadAudio("res/audio/jump.ogg", "jump", 0.6f, false);
     m_Sound->loadAudio("res/audio/morte.ogg", "death", 0.8f, false);
     m_Sound->loadAudio("res/audio/fireball.ogg", "fire", 0.2f, false);
+    m_Sound->loadAudio("res/audio/hit.ogg", "hit", 0.2f, false);
     m_Sound->streamAudio("res/audio/cobblestone_village.ogg", "music", 0.1f, true);
 
     // Text
@@ -485,6 +486,10 @@ bool Game::updateTiro(Tiro *t, float fElapsedTime)
                 m_Self.m_State = 3;
                 m_Self.m_PlayerSpeed = {0.0f, 0.0f};
                 m_Sound->playAudio("death");
+            }
+            else
+            {
+                m_Sound->playAudio("hit");
             }
             return true;
         }
