@@ -70,7 +70,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += "ED............................ED";
     tmp += "EGGD........................EGGD";
     tmp += "EGGGGDO..................OEGGGGD";
-    tmp += "LUUUUUEGGGGGGGGGGGGGGGGGGDUUUUUK";
+    tmp += "LUUUUUUGGGGGGGGGGGGGGGGGGUUUUUUK";
     tmp += "LUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUK";
     tmp += "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSB";
 
@@ -291,8 +291,11 @@ void Game::update(float fElapsedTime)
     }
 
     static bool music = true;
-    if ((m_keys[GLFW_KEY_ENTER] && m_Self.m_State != 3 && isAllDed()) || (m_Self.m_State == 3 && isAllDed()))
+    static bool enter = false;
+
+    if (m_keys[GLFW_KEY_ENTER] && isAllDed() && !enter)
     {
+        enter = true;
         m_Self.m_State = 0;
         m_Self.m_vida = 3;
         m_CurrentMap++;
@@ -305,6 +308,8 @@ void Game::update(float fElapsedTime)
         msg << m_CurrentMap;
         Send(msg);
     }
+    if (!m_keys[GLFW_KEY_ENTER])
+        enter = false;
 
     static int prevState = 0;
     if (m_Self.m_State == 3 && prevState != 3)
