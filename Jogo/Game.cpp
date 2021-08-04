@@ -84,7 +84,7 @@ Game::Game(const std::string &ip, const std::string &name) : m_Proj(glm::ortho(0
     tmp += ".H....H..H....H...H...H....H....";
     tmp += ".HHHH.H..H.HHHH...H...HHHH.HHHH.";
     tmp += "................................";
-    tmp += "HHHHHWWWWWWWWWWWWWWWWWWWWWWWWHHH";
+    tmp += "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
     tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
     tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
     tmp += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
